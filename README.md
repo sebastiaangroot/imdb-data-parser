@@ -24,3 +24,5 @@ Execute
     ~/imdb-data-parser$ python3 imdbparser.py
 
 You can use -h parameter to see list of optional arguments
+
+    ~/imdb-data-parser$ ./imdbparser.py -h
