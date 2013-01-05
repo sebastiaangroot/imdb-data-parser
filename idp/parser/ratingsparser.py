@@ -1,0 +1,67 @@
+from .baseparser import BaseParser
+from ..utils.regexhelper import *
+import logging
+
+class RatingsParser(BaseParser):
+    """
+    RegExp: /\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)/gm
+    pattern: \s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)
+    flags: gm
+    10 capturing groups:
+        group 1: (\S*)                               distribution
+        group 2: (\S*)                               votes
+        group 3: (\S*)                               rank
+        group 4: #TITLE (UNIQUE KEY)
+        group 5: (.*? \(\S{4,}\))                    movie name + year
+        group 6: (\(.+\))                            type ex:(TV)
+        group 7: (\{(.*?)\s?(\(.+?\))\})             series info ex: {Ally Abroad (#3.1)}
+        group 8: (.*?)                               episode name ex: Ally Abroad
+        group 9: (\(.+?\))                           episode number ex: (#3.1)
+        group 10: (\{\{SUSPENDED\}\})                is suspended?
+    """
+  
+    # properties
+    baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)"
+    inputFileName = "ratings.list"
+    numberOfLinesToBeSkipped = 28
+
+    def __init__(self, preferencesMap):
+        self._preferencesMap = preferencesMap
+
+    @property
+    def preferencesMap(self):
+        return self._preferencesMap
+
+    def parse_into_tsv(self):
+        import time
+
+        startTime = time.time()
+
+        inputFile = self.get_input_file()
+        outputFile = self.get_output_file()
+        counter = 0
+        fuckedUpCount = 0
+        numberOfProcessedLines = 0
+
+        for line in inputFile :
+          if(numberOfProcessedLines > self.numberOfLinesToBeSkipped):
+            matcher = RegExHelper(line)
+            isMatch = matcher.match(self.baseMatcherPattern)
+
+            if(isMatch):
+                outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4).strip() + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
+            else:
+                logging.critical("This line is fucked up: " + line)
+                fuckedUpCount += 1
+          numberOfProcessedLines +=  1
+
+        outputFile.flush()
+        outputFile.close()
+        inputFile .close()
+
+        logging.info("Finished with " + str(fuckedUpCount) + " fucked up line\n")
+        logging.info("Duration: " + str(round(time.time() - startTime)))
+
+    def parse_into_db(self):
+        #TODO
+        pass
