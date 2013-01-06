@@ -20,6 +20,28 @@ import os.path
 from ..settings import *
 import logging
 
+class IMDBList(object):
+    def __init__(self, listname):
+        #TODO: check listname finishes with .list
+        self.listname = listname
+
+        fullFilePath = os.path.join(SOURCE_PATH, self.listname)
+        print(fullFilePath)
+        logging.info("Trying to find file: %s", fullFilePath)
+        if os.path.isfile(fullFilePath):
+            logging.info("File found: %s", fullFilePath)
+            self.file = open(fullFilePath, "r", encoding='iso-8859-1')
+        else:
+            logging.error("File cannot be found: %s", fullFilePath)
+
+    def full_path(self):
+        if self.listname.lower().endswith(".gz"):
+            return os.path.join(SOURCE_PATH, self.listname) + ".gz"
+        return os.path.join(SOURCE_PATH, self.listname)
+
+    def tsv_path(self):
+        return self.full_path() + ".tsv"
+
 def get_full_path(filename, isCompressed = False):
     """
     constructs a full path for a dump file in the SOURCE_PATH
@@ -78,3 +100,8 @@ def openfile(fullFilePath):
     logging.error("File cannot be found: %s", fullFilePath + ".gz")
 
     raise RuntimeError("FileNotFoundError: " + fullFilePath)
+
+if __name__ == "__main__":
+    f = IMDBList("movies.list")
+    print(f.full_path())
+    print(f.tsv_path())
