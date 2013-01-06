@@ -4,6 +4,9 @@ imdb-data-parser
 Parses the IMDB dumps into CSV and Relational Database insert queries
 Uses IMDB dumps from: http://www.imdb.com/interfaces
 
+imdb-data-parser is a free software licensed by GPLv3.
+
+
 Requirements
 ================
 Python 3.x
