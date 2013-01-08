@@ -21,8 +21,8 @@ import logging
 
 class RatingsParser(BaseParser):
     """
-    RegExp: /\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)/gm
-    pattern: \s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)
+    RegExp: /\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$/gm
+    pattern: \s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$
     flags: gm
     10 capturing groups:
         group 1: (\S*)                               distribution
@@ -38,9 +38,9 @@ class RatingsParser(BaseParser):
     """
   
     # properties
-    baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\))\s?(\(.+\))?\s?(\{(.*?)\s?(\(.+?\))\})?\s?(\{\{SUSPENDED\}\})?)"
+    baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$"
     inputFileName = "ratings.list"
-    numberOfLinesToBeSkipped = 28
+    numberOfLinesToBeSkipped = 0 #28
 
     def __init__(self, preferencesMap):
         self._preferencesMap = preferencesMap
@@ -66,7 +66,7 @@ class RatingsParser(BaseParser):
             isMatch = matcher.match(self.baseMatcherPattern)
 
             if(isMatch):
-                outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4).strip() + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
+                outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
             else:
                 logging.critical("This line is fucked up: " + line)
                 fuckedUpCount += 1
