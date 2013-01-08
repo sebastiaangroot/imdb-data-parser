@@ -38,7 +38,7 @@ class GenresParser(BaseParser):
     # properties
     baseMatcherPattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
     inputFileName = "genres.list"
-    numberOfLinesToBeSkipped = 0 #378
+    numberOfLinesToBeSkipped = 378
 
     def __init__(self, preferencesMap):
         self._preferencesMap = preferencesMap
@@ -59,7 +59,7 @@ class GenresParser(BaseParser):
         numberOfProcessedLines = 0
 
         for line in inputFile :
-          if(numberOfProcessedLines > self.numberOfLinesToBeSkipped):
+          if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
             matcher = RegExHelper(line)
             isMatch = matcher.match(self.baseMatcherPattern)
 

@@ -40,7 +40,7 @@ class RatingsParser(BaseParser):
     # properties
     baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$"
     inputFileName = "ratings.list"
-    numberOfLinesToBeSkipped = 0 #28
+    numberOfLinesToBeSkipped = 28
 
     def __init__(self, preferencesMap):
         self._preferencesMap = preferencesMap
@@ -61,7 +61,7 @@ class RatingsParser(BaseParser):
         numberOfProcessedLines = 0
 
         for line in inputFile :
-          if(numberOfProcessedLines > self.numberOfLinesToBeSkipped):
+          if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
             matcher = RegExHelper(line)
             isMatch = matcher.match(self.baseMatcherPattern)
 

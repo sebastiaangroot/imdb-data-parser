@@ -59,7 +59,7 @@ class MoviesParser(BaseParser):
         numberOfProcessedLines = 0
 
         for line in inputFile :
-          if(numberOfProcessedLines > self.numberOfLinesToBeSkipped):
+          if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
             matcher = RegExHelper(line)
             isMatch = matcher.match(self.baseMatcherPattern)
 

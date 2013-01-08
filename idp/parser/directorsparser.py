@@ -1,3 +1,20 @@
+"""
+This file is part of imdb-data-parser.
+
+imdb-data-parser is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+imdb-data-parser is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 from .baseparser import BaseParser
 from ..utils.regexhelper import *
 import logging
@@ -24,7 +41,7 @@ class DirectorsParser(BaseParser):
     # properties
     baseMatcherPattern = "(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)(\(.*\))?$"
     inputFileName = "directors.list"
-    numberOfLinesToBeSkipped = 0 #235
+    numberOfLinesToBeSkipped = 235
 
     def __init__(self, preferencesMap):
         self._preferencesMap = preferencesMap
@@ -45,7 +62,7 @@ class DirectorsParser(BaseParser):
         numberOfProcessedLines = 0
 
         for line in inputFile :
-          if(numberOfProcessedLines > self.numberOfLinesToBeSkipped):
+          if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
             matcher = RegExHelper(line)
             isMatch = matcher.match(self.baseMatcherPattern)
 
