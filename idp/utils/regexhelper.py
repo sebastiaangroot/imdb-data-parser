@@ -30,3 +30,9 @@ class RegExHelper(object):
             return ""
         else:
             return self.rematch.group(i)
+
+    def get_last_string(self):
+        """
+        returns the last string that is examined
+        """
+        return self.matchstring

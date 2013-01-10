@@ -17,33 +17,78 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import *
 from ..utils.filehandler import *
+from ..utils.regexhelper import *
 
 class BaseParser(metaclass=ABCMeta):
     """Common methods for all parser classes"""
 
-    seperator = "\t"
+    seperator = "\t" #TODO: get from settings
 
     @abstractmethod
-    def parse_into_tsv(self):
+    def parse_into_tsv(self, matcher):
         raise NotImplemented
 
     @abstractmethod
-    def parse_into_db(self):
+    def parse_into_db(self, matcher):
         raise NotImplemented
 
     def start_processing(self):
-        if(self.preferencesMap["mode"] == "TSV"):
-            self.parse_into_tsv()
-        elif(self.preferencesMap["mode"] == "SQL"):
-            self.parse_into_db()
-        else:
-            raise NotImplemented("Mode: " + self.preferencesMap["mode"])
+        import time
+
+        startTime = time.time()
+        inputFile = self.get_input_file()
+
+        if(self.mode == "TSV"):
+            self.outputFile = self.get_output_file()
+        elif(self.mode == "SQL"):
+            pass
+            #TODO: drop table if exists
+            #TODO: create table
+            # databaseHelper = DatabaseHelper()
+            # databaseHelper.execute("")
+
+        self.fuckedUpCount = 0
+        counter = 0
+        numberOfProcessedLines = 0
+
+        for line in inputFile :
+            if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
+                matcher = RegExHelper(line)
+
+                if(self.mode == "TSV"):
+                    '''
+                    give the matcher directly to implementing class
+                     and let it decide what to do when regEx is matched and unmatched
+                    '''
+                    self.parse_into_tsv(matcher)
+                elif(self.mode == "SQL"):
+                    self.parse_into_db(matcher)
+                else:
+                    raise NotImplemented("Mode: " + self.mode)
+
+            numberOfProcessedLines +=  1
+
+        inputFile .close()
+
+        if 'outputFile' in locals():
+            self.outputFile.flush()
+            self.outputFile.close()
+
+        if 'databaseHelper' in locals():
+            databaseHelper.commit()
+            databaseHelper.close()
+
+        # fuckedUpCount is calculated in implementing class
+        logging.info("Finished with " + str(self.fuckedUpCount) + " fucked up line\n")
+        logging.info("Duration: " + str(round(time.time() - startTime)))
 
     def get_input_file(self):
         return openfile(get_full_path(self.inputFileName))
 
     def get_output_file(self):
         return open(get_full_path_for_tsv(self.inputFileName), "w")
+
+    # Below methods force associated properties to be defined in any derived class
 
     @abstractproperty
     def baseMatcherPattern(self):
@@ -58,5 +103,5 @@ class BaseParser(metaclass=ABCMeta):
         raise NotImplemented
 
     @abstractproperty
-    def preferencesMap(self):
+    def scripts(self):
         raise NotImplemented

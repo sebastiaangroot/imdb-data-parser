@@ -25,7 +25,7 @@ class IMDBList(object):
         #TODO: check listname finishes with .list
         self.listname = listname
 
-        fullFilePath = os.path.join(SOURCE_PATH, self.listname)
+        fullFilePath = os.path.join(INPUT_DIR, self.listname)
         print(fullFilePath)
         logging.info("Trying to find file: %s", fullFilePath)
         if os.path.isfile(fullFilePath):
@@ -36,21 +36,21 @@ class IMDBList(object):
 
     def full_path(self):
         if self.listname.lower().endswith(".gz"):
-            return os.path.join(SOURCE_PATH, self.listname) + ".gz"
-        return os.path.join(SOURCE_PATH, self.listname)
+            return os.path.join(INPUT_DIR, self.listname) + ".gz"
+        return os.path.join(INPUT_DIR, self.listname)
 
     def tsv_path(self):
         return self.full_path() + ".tsv"
 
 def get_full_path(filename, isCompressed = False):
     """
-    constructs a full path for a dump file in the SOURCE_PATH
+    constructs a full path for a dump file in the INPUT_DIR
     filename should be without '.list'
     """
     if(isCompressed):
-        return os.path.join(SOURCE_PATH, filename) + ".gz"
+        return os.path.join(INPUT_DIR, filename) + ".gz"
     else:
-        return os.path.join(SOURCE_PATH, filename)
+        return os.path.join(INPUT_DIR, filename)
 
 def get_full_path_for_tsv(filename):
     return get_full_path(filename) + ".tsv"

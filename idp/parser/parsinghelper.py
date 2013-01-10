@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 from idp import settings
 import logging
+import traceback
 
 class ParsingHelper(object):
     """ParsingHelper manages parsing order"""
@@ -47,5 +48,6 @@ class ParsingHelper(object):
             try:
                 parser.start_processing()
             except Exception as e:
-                logging.error("File not found for " + item + "\n\tException is: " + str(e))
+                logging.error("Exception occured while parsing item: " + item + "\n\tException is: " + str(e))
+                traceback.print_exc()
         logging.info("Parsing finished.")

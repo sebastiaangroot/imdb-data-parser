@@ -41,44 +41,24 @@ class RatingsParser(BaseParser):
     baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$"
     inputFileName = "ratings.list"
     numberOfLinesToBeSkipped = 28
+    scripts = { #TODO: fill 
+        'drop' : '',
+        'create' : '',
+        'insert' : ''
+    }
 
     def __init__(self, preferencesMap):
-        self._preferencesMap = preferencesMap
+        self.mode = preferencesMap['mode']
 
-    @property
-    def preferencesMap(self):
-        return self._preferencesMap
+    def parse_into_tsv(self, matcher):
+        isMatch = matcher.match(self.baseMatcherPattern)
 
-    def parse_into_tsv(self):
-        import time
+        if(isMatch):
+            self.outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fuckedUpCount += 1
 
-        startTime = time.time()
-
-        inputFile = self.get_input_file()
-        outputFile = self.get_output_file()
-        counter = 0
-        fuckedUpCount = 0
-        numberOfProcessedLines = 0
-
-        for line in inputFile :
-          if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
-            matcher = RegExHelper(line)
-            isMatch = matcher.match(self.baseMatcherPattern)
-
-            if(isMatch):
-                outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
-            else:
-                logging.critical("This line is fucked up: " + line)
-                fuckedUpCount += 1
-          numberOfProcessedLines +=  1
-
-        outputFile.flush()
-        outputFile.close()
-        inputFile .close()
-
-        logging.info("Finished with " + str(fuckedUpCount) + " fucked up line\n")
-        logging.info("Duration: " + str(round(time.time() - startTime)))
-
-    def parse_into_db(self):
+    def parse_into_db(self, matcher):
         #TODO
         pass

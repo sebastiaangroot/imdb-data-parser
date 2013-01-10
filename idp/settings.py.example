@@ -15,8 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-SOURCE_PATH = "/home/destan/Desktop/"
-DESTINATION_PATH = "/home/destan/Desktop/"
+INPUT_DIR = "/home/destan/Desktop/"
+OUTPUT_DIR = "/home/destan/Desktop/"
 
 INTERFACES_SERVER = "ftp.fu-berlin.de"
 INTERFACES_DIRECTORY = "pub/misc/movies/database/"

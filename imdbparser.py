@@ -32,14 +32,14 @@ logging.config.fileConfig("logging.conf")
 
 parser = argparse.ArgumentParser(description="an IMDB data parser")
 parser.add_argument('-m', '--mode', help='Parsing mode, defines output of parsing process. Default: CSV', choices=['TSV', 'SQL', 'DB'])
-parser.add_argument('-s', '--source_dir', help='source directory of interface lists')
-parser.add_argument('-d', '--destination_dir', help='destination directory for outputs')
+parser.add_argument('-i', '--input_dir', help='source directory of interface lists')
+parser.add_argument('-o', '--output_dir', help='destination directory for outputs')
 parser.add_argument('-u', '--update_lists', action='store_true', help='downloads lists from server')
 
 args = parser.parse_args()
 logging.info("mode:%s", args.mode)
-logging.info("source_dir:%s", args.source_dir)
-logging.info("destination_dir:%s", args.destination_dir)
+logging.info("input_dir:%s", args.input_dir)
+logging.info("output_dir:%s", args.output_dir)
 logging.info("update_lists:%s", args.update_lists)
 
 if args.update_lists:
@@ -55,21 +55,20 @@ if args.mode:
 else: #default
     mode = "TSV"
 
-if args.source_dir:
-    sourcePath = args.source_dir
+if args.input_dir:
+    inputDir = args.input_dir
 else:
-    sourcePath = SOURCE_PATH
+    inputDir = INPUT_DIR
 
-if args.destination_dir:
-    destinationPath = args.source_dir
+if args.input_dir:
+    outputDir = args.output_dir
 else:
-    destinationPath = DESTINATION_PATH
+    outputDir = OUTPUT_DIR
 
 preferencesMap = {
     "mode":mode, 
-    "destinationDir": args.destination_dir,
-    "sourcePath": sourcePath,
-    "destinationPath": destinationPath
+    "inputDir": inputDir,
+    "outputDir": outputDir
 }
 
 ParsingHelper.parse_all(preferencesMap)

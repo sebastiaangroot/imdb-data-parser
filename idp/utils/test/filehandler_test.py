@@ -7,7 +7,7 @@ class FileHandlerTests(unittest.TestCase):
         self.list = 'movies'
 
     def test_get_full_path(self):
-        self.assertEqual(get_full_path(self.list), settings.SOURCE_PATH+self.list)
+        self.assertEqual(get_full_path(self.list), settings.INPUT_DIR+self.list)
 
 
 if __name__ == '__main__':

@@ -34,61 +34,48 @@ class PlotParser(BaseParser):
     baseMatcherPattern = "(.+?): (.*)"
     inputFileName = "plot.list"
     numberOfLinesToBeSkipped = 15
+    scripts = { #TODO: fill 
+        'drop' : '',
+        'create' : '',
+        'insert' : ''
+    }
 
     def __init__(self, preferencesMap):
-        self._preferencesMap = preferencesMap
+        self.mode = preferencesMap['mode']
 
-    @property
-    def preferencesMap(self):
-        return self._preferencesMap
+        # specific to this class
+        self.title = ""
+        self.plot = ""
 
-    def parse_into_tsv(self):
-        import time
-        startTime = time.time()
+    def parse_into_tsv(self, matcher):
+        isMatch = matcher.match(self.baseMatcherPattern)
 
-        inputFile = self.get_input_file()
-        outputFile = self.get_output_file()
-        counter = 0
-        fuckedUpCount = 0
+        if(isMatch):
+            if(matcher.group(1) == "MV"): #Title
+                if(self.title != ""):
+                    self.outputFile.write(self.title + self.seperator + self.plot + "\n")
 
-        title = ""
-        plot = ""
+                self.plot = ""
+                self.title = matcher.group(2)
 
-        numberOfProcessedLines = 0
+            elif(matcher.group(1) == "PL"): #Descriptive text
+                self.plot += matcher.group(2)
+            elif(matcher.group(1) == "BY"):
+                pass
+            else:
+                logging.critical("Unhandled abbreviation: " + matcher.group(1) + " in " + line)
+        #else:
+            #just ignore this part, useless lines
 
-        for line in inputFile :
-            if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
-                matcher = RegExHelper(line)
-                isMatch = matcher.match(self.baseMatcherPattern)
+        """
+            FIXME: this parsing  misses the last entry
+                need to execute following just after looping the input file's lines:
+            # Covers the last item
+            outputFile.write(title + self.seperator + plot + "\n")
 
-                if(isMatch):
-                    if(matcher.group(1) == "MV"): #Title
-                        if(title != ""):
-                            outputFile.write(title + self.seperator + plot + "\n")
+            consider writing to the file in "BY:" condition
+        """
 
-                        plot = ""
-                        title = matcher.group(2)
-
-                    elif(matcher.group(1) == "PL"): #Descriptive text
-                        plot += matcher.group(2)
-                    elif(matcher.group(1) == "BY"):
-                        continue
-                    else:
-                        logging.critical("Unhandled abbreviation: " + matcher.group(1) + " in " + line)
-                #else:
-                    #just ignore this part, useless lines
-            numberOfProcessedLines +=  1
-          
-        # Covers the last item
-        outputFile.write(title + self.seperator + plot + "\n")
-          
-        outputFile.flush()
-        outputFile.close()
-        inputFile.close()
-
-        logging.info("Finished with " + str(fuckedUpCount) + " fucked up line\n")
-        logging.info("Duration: " + str(round(time.time() - startTime)))
-
-    def parse_into_db(self):
+    def parse_into_db(self, matcher):
         #TODO
         pass
