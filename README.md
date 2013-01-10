@@ -21,10 +21,10 @@ You need to copy this file as `settings.py` and edit this file before running th
     cp settings.py.example settings.py
     your_favourite_editor settings.py
 
-Execute
--------
+Executing
+---------
 
-    ~/imdb-data-parser$ python3 imdbparser.py
+    ~/imdb-data-parser$ ./imdbparser.py
 
 You can use -h parameter to see list of optional arguments
 
