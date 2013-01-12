@@ -25,12 +25,13 @@ INTERFACES_DIRECTORY = "pub/misc/movies/database/"
 #ftp://ftp.sunet.se/pub/tv+movies/imdb/
 
 LISTS = [
+    "directors",
+    "genres",
     "movies",
     "plot",
     "actors", 
     "actresses",
     "aka-names",
     "aka-titles",
-    "directors", 
     "ratings"
 ]
