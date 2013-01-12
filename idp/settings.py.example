@@ -24,6 +24,11 @@ INTERFACES_DIRECTORY = "pub/misc/movies/database/"
 #ftp://ftp.funet.fi/pub/mirrors/ftp.imdb.com/pub/
 #ftp://ftp.sunet.se/pub/tv+movies/imdb/
 
+DBHOST = "database_host"
+DBNAME = "database_name"
+DBUSER = "database_user"
+DBPASSWORD = "database_password"
+
 LISTS = [
     "directors",
     "genres",
