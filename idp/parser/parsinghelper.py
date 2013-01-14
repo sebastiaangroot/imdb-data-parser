@@ -23,9 +23,9 @@ class ParsingHelper(object):
     """ParsingHelper manages parsing order"""
 
     @staticmethod
-    def parse_all(preferencesMap):
+    def parse_one(item, preferencesMap):
 
-        def get_parser_class_for( itemName ):
+        def get_parser_class_for(itemName):
             """
             Thanks to http://stackoverflow.com/a/452981
             """
@@ -36,18 +36,33 @@ class ParsingHelper(object):
             for comp in parts[1:]:
                 m = getattr(m, comp)            
             return m
+            
+        try:
+            ParserClass = get_parser_class_for(item)
+        except Exception as e:
+            logging.error("No parser found for: " + item + "\n\tException is: " + str(e))
+            return 1
+        logging.info("Parsing " + item + "...")
+        parser = ParserClass(preferencesMap)
+        try:
+            parser.start_processing()
+        except Exception as e:
+            logging.error("Exception occured while parsing item: " + item + "\n\tException is: " + str(e))
+            traceback.print_exc()
+        logging.info("Parsing finished for item: " + item)
+ 
 
+    @staticmethod
+    def parse_all(preferencesMap):
         for item in settings.LISTS:
-            try:
-                ParserClass = get_parser_class_for(item)
-            except Exception as e:
-                logging.error("No parser found for: " + item + "\n\tException is: " + str(e))
-                continue
-            logging.info("Parsing " + item + "...")
-            parser = ParserClass(preferencesMap)
-            try:
-                parser.start_processing()
-            except Exception as e:
-                logging.error("Exception occured while parsing item: " + item + "\n\tException is: " + str(e))
-                traceback.print_exc()
+            ParsingHelper.parse_one(item, preferencesMap)
         logging.info("Parsing finished.")
+
+if __name__ == "__main__":
+    print("hede")
+    preferencesMap = {
+        "mode":"TSV", 
+        "inputDir": "/home/xaph/imdb_lists/",
+        "outputDir": "/home/xaph/idp_files/"
+    }
+    ParsingHelper.parse_one("movies", preferencesMap)
