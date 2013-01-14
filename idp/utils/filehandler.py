@@ -21,26 +21,43 @@ from ..settings import *
 import logging
 
 class IMDBList(object):
-    def __init__(self, listname):
+    def __init__(self, listname, preferencesMap):
         #TODO: check listname finishes with .list
         self.listname = listname
-
-        fullFilePath = os.path.join(INPUT_DIR, self.listname)
-        print(fullFilePath)
-        logging.info("Trying to find file: %s", fullFilePath)
-        if os.path.isfile(fullFilePath):
-            logging.info("File found: %s", fullFilePath)
-            self.file = open(fullFilePath, "r", encoding='iso-8859-1')
-        else:
-            logging.error("File cannot be found: %s", fullFilePath)
+        self.preferencesMap = preferencesMap
 
     def full_path(self):
         if self.listname.lower().endswith(".gz"):
-            return os.path.join(INPUT_DIR, self.listname) + ".gz"
-        return os.path.join(INPUT_DIR, self.listname)
+            return os.path.join(self.preferencesMap['inputDir'], self.listname) + ".gz"
+        return os.path.join(self.preferencesMap['inputDir'], self.listname)
 
     def tsv_path(self):
-        return self.full_path() + ".tsv"
+        return os.path.join(self.preferencesMap['outputDir'], self.listname) + ".tsv"
+
+    def get_input_file(self):
+        fullFilePath = self.full_path()
+        logging.info("Trying to find file: %s", fullFilePath)
+        if os.path.isfile(fullFilePath):
+            logging.info("File found: %s", fullFilePath)
+            return open(fullFilePath, "r", encoding='iso-8859-1')
+
+        logging.error("File cannot be found: %s", fullFilePath)
+
+        logging.info("Trying to find file: %s", fullFilePath + ".gz")
+        if os.path.isfile(fullFilePath + ".gz"):
+            logging.info("File found: %s", fullFilePath + ".gz")
+            if extract(fullFilePath + ".gz") == 0:
+                return open(fullFilePath, "r", encoding='iso-8859-1')
+            else:
+                raise RuntimeError("Unknown error occured")
+        logging.error("File cannot be found: %s", fullFilePath + ".gz")
+
+        raise RuntimeError("FileNotFoundError: " + fullFilePath)
+
+    def get_output_file(self):
+        return open(self.tsv_path(), "w")
+
+
 
 def get_full_path(filename, isCompressed = False):
     """
@@ -51,9 +68,6 @@ def get_full_path(filename, isCompressed = False):
         return os.path.join(INPUT_DIR, filename) + ".gz"
     else:
         return os.path.join(INPUT_DIR, filename)
-
-def get_full_path_for_tsv(filename):
-    return get_full_path(filename) + ".tsv"
 
 def get_decompressed_file_name(fullpath):
     return fullpath[:-3]
