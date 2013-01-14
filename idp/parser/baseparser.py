@@ -36,10 +36,10 @@ class BaseParser(metaclass=ABCMeta):
         import time
 
         startTime = time.time()
-        inputFile = self.get_input_file()
 
         if(self.mode == "TSV"):
-            self.outputFile = self.get_output_file()
+            #self.outputFile = self.get_output_file()
+            pass
         elif(self.mode == "SQL"):
             pass
             #TODO: drop table if exists
@@ -51,7 +51,7 @@ class BaseParser(metaclass=ABCMeta):
         counter = 0
         numberOfProcessedLines = 0
 
-        for line in inputFile :
+        for line in self.inputFile :
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
                 matcher = RegExHelper(line)
 
@@ -68,7 +68,7 @@ class BaseParser(metaclass=ABCMeta):
 
             numberOfProcessedLines +=  1
 
-        inputFile .close()
+        self.inputFile.close()
 
         if 'outputFile' in locals():
             self.outputFile.flush()
@@ -81,12 +81,6 @@ class BaseParser(metaclass=ABCMeta):
         # fuckedUpCount is calculated in implementing class
         logging.info("Finished with " + str(self.fuckedUpCount) + " fucked up line\n")
         logging.info("Duration: " + str(round(time.time() - startTime)))
-
-    def get_input_file(self):
-        return openfile(get_full_path(self.inputFileName))
-
-    def get_output_file(self):
-        return open(get_full_path_for_tsv(self.inputFileName), "w")
 
     # Below methods force associated properties to be defined in any derived class
 

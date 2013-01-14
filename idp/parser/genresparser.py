@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 from .baseparser import BaseParser
 from ..utils.regexhelper import *
+from ..utils.filehandler import IMDBList
 import logging
 
 class GenresParser(BaseParser):
@@ -47,6 +48,9 @@ class GenresParser(BaseParser):
 
     def __init__(self, preferencesMap):
         self.mode = preferencesMap['mode']
+        self.list = IMDBList(self.inputFileName, preferencesMap)
+        self.inputFile = self.list.get_input_file()
+        self.outputFile = self.list.get_output_file()
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
