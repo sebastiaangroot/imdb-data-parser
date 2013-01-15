@@ -22,8 +22,8 @@ import logging
 
 class DirectorsParser(BaseParser):
     """
-    RegExp: /(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)(\(.*\))?$/gm
-    pattern: (.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)(\(.*\))?$
+    RegExp: /(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$/gm
+    pattern: (.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$
     flags: gm
     11 capturing groups: 
         group 1: (.*?)                               surname
@@ -40,7 +40,7 @@ class DirectorsParser(BaseParser):
     """
   
     # properties
-    baseMatcherPattern = "(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)(\(.*\))?$"
+    baseMatcherPattern = "(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$"
     inputFileName = "directors.list"
     numberOfLinesToBeSkipped = 235
     scripts = { #TODO: fill 

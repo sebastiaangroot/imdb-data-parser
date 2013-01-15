@@ -55,7 +55,7 @@ class IMDBList(object):
         raise RuntimeError("FileNotFoundError: " + fullFilePath)
 
     def get_output_file(self):
-        return open(self.tsv_path(), "w")
+        return open(self.tsv_path(), "w", encoding='iso-8859-1')
 
 
 
