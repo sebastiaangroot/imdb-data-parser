@@ -20,12 +20,12 @@ from ..utils.regexhelper import *
 from ..utils.filehandler import IMDBList
 import logging
 
-class DirectorsParser(BaseParser):
+class ActorsParser(BaseParser):
     """
-    RegExp: /(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$/gm
-    pattern: (.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$
+    RegExp: /(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*?\))?\s*(\(.*\))?\s*(\[.*\])?\s*(<.*>)?$/gm
+    pattern: (.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*?\))?\s*(\(.*\))?\s*(\[.*\])?\s*(<.*>)?$
     flags: gm
-    10 capturing groups: 
+    12 capturing groups: 
         group 1: (.*?)                               surname, name                        
         group 2: #TITLE (UNIQUE KEY)
         group 3: (.*? \(\S{4,}\))                    movie name + year
@@ -34,14 +34,16 @@ class DirectorsParser(BaseParser):
         group 6: (.*?)                               episode name ex: Ally Abroad
         group 7: (\(\S+?\))                          episode number ex: (#3.1)
         group 8: (\{\{SUSPENDED\}\})                 is suspended?
-        group 9: (\(.*\))                            info
-        group 10: ()
+        group 9: (\(.*?\))                           info 1
+        group 10: (\(.*\))                           info 2
+        group 11: (\[.*\])                           role
+        group 12: ()
     """
   
     # properties
-    baseMatcherPattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$'
-    inputFileName = "directors.list"
-    numberOfLinesToBeSkipped = 235
+    baseMatcherPattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*?\))?\s*(\(.*\))?\s*(\[.*\])?\s*(<.*>)?$'
+    inputFileName = "actors.list"
+    numberOfLinesToBeSkipped = 239
     scripts = { #TODO: fill 
         'drop' : '',
         'create' : '',
@@ -70,7 +72,7 @@ class DirectorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
                     
-            self.outputFile.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + "\n")
+            self.outputFile.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + self.seperator + matcher.group(11) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:
