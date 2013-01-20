@@ -53,6 +53,10 @@ class BaseParser(metaclass=ABCMeta):
 
         for line in self.inputFile :
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
+                #end of data
+                if("--------------" in line):
+                    break
+
                 matcher = RegExHelper(line)
 
                 if(self.mode == "TSV"):

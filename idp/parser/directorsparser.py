@@ -22,25 +22,24 @@ import logging
 
 class DirectorsParser(BaseParser):
     """
-    RegExp: /(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$/gm
-    pattern: (.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$
+    RegExp: /(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)"?|EDIT)?\s*(<.*>)?$/gm
+    pattern: (.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)"?|EDIT)?\s*(<.*>)?$
     flags: gm
-    11 capturing groups: 
-        group 1: (.*?)                               surname
-        group 2: (, )                                just grouping ,
-        group 3: (\S*)                               name
-        group 4: #TITLE (UNIQUE KEY)
-        group 5: (.*? \(\S{4,}\))                    movie name + year
-        group 6: (\(\S+\))                           type ex:(TV)
-        group 7: (\{(.*?) ?(\(\S+?\))?\})            series info ex: {Ally Abroad (#3.1)}
-        group 8: (.*?)                               episode name ex: Ally Abroad
-        group 9: (\(\S+?\))                          episode number ex: (#3.1)
-        group 10: (\{\{SUSPENDED\}\})                is suspended?
-        group 11: (\(.*\))                           info
+    10 capturing groups: 
+        group 1: (.*?)                               surname, name                        
+        group 2: #TITLE (UNIQUE KEY)
+        group 3: (.*? \(\S{4,}\))                    movie name + year
+        group 4: (\(\S+\))                           type ex:(TV)
+        group 5: (\{(.*?) ?(\(\S+?\))?\})            series info ex: {Ally Abroad (#3.1)}
+        group 6: (.*?)                               episode name ex: Ally Abroad
+        group 7: (\(\S+?\))                          episode number ex: (#3.1)
+        group 8: (\{\{SUSPENDED\}\})                is suspended?
+        group 9: (\(.*\))                           info
+        group 10: ()
     """
   
     # properties
-    baseMatcherPattern = "(.*?)(, )?(\S*)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\))?(<.*>)?$"
+    baseMatcherPattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)"?|EDIT)?\s*(<.*>)?$'
     inputFileName = "directors.list"
     numberOfLinesToBeSkipped = 235
     scripts = { #TODO: fill 
@@ -48,6 +47,9 @@ class DirectorsParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+
+    name = ""
+    surname = ""
 
     def __init__(self, preferencesMap):
         self.mode = preferencesMap['mode']
@@ -59,15 +61,16 @@ class DirectorsParser(BaseParser):
         isMatch = matcher.match(self.baseMatcherPattern)
 
         if(isMatch):
-            if(len(matcher.group(1)) > 0 or len(matcher.group(3)) > 0):
-                if(len(matcher.group(2)) > 0):
-                    surname = matcher.group(1)
-                    name = matcher.group(3)
+            if(len(matcher.group(1).strip()) > 0):
+                namelist = matcher.group(1).split(', ')
+                if(len(namelist) == 2):
+                    self.name = namelist[1]
+                    self.surname = namelist[0]
                 else:
-                    name = matcher.group(1) + matcher.group(3)
-                    surname = ""
+                    self.name = namelist[0]
+                    self.surname = ""
                     
-                self.outputFile.write(name + self.seperator + surname + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + self.seperator + matcher.group(11) + "\n")
+            self.outputFile.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:
