@@ -20,7 +20,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import argparse
 import logging
-import logging.config
+from idp.utils.loggerprovider import *
 from idp.parser.parsinghelper import ParsingHelper
 from idp.settings import *
 
@@ -28,7 +28,7 @@ from idp.settings import *
 if sys.version_info.major != 3:
     sys.exit("Error: wrong version! You need to install python3 to run this application properly.")
 
-logging.config.fileConfig("logging.conf")
+initialize_logger()
 
 parser = argparse.ArgumentParser(description="an IMDB data parser")
 parser.add_argument('-m', '--mode', help='Parsing mode, defines output of parsing process. Default: CSV', choices=['TSV', 'SQL', 'DB'])
