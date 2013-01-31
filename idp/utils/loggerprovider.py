@@ -15,11 +15,10 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from ..settings import *
 import logging
 import os.path
 
-def initialize_logger():
+def initialize_logger(preferencesMap):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     
@@ -31,14 +30,14 @@ def initialize_logger():
     logger.addHandler(ch)
 
     # create error file handler and set level to error
-    ch = logging.FileHandler(os.path.join(OUTPUT_DIR, 'imdbparserError.log'),'w', encoding=None, delay="true")
+    ch = logging.FileHandler(os.path.join(preferencesMap['outputDir'], 'imdbparserError.log'),'w', encoding=None, delay="true")
     ch.setLevel(logging.ERROR)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
     # create info file handler and set level to info
-    ch = logging.FileHandler(os.path.join(OUTPUT_DIR, 'imdbparserAll.log'),'w')
+    ch = logging.FileHandler(os.path.join(preferencesMap['outputDir'], 'imdbparserAll.log'),'w')
     ch.setLevel(logging.INFO)
     formatter = logging.Formatter("%(levelname)s - %(message)s")
     ch.setFormatter(formatter)

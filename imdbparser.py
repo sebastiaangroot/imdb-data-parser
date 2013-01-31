@@ -23,12 +23,11 @@ import logging
 from idp.utils.loggerprovider import *
 from idp.parser.parsinghelper import ParsingHelper
 from idp.settings import *
+import datetime
 
 # check python version
 if sys.version_info.major != 3:
     sys.exit("Error: wrong version! You need to install python3 to run this application properly.")
-
-initialize_logger()
 
 parser = argparse.ArgumentParser(description="an IMDB data parser")
 parser.add_argument('-m', '--mode', help='Parsing mode, defines output of parsing process. Default: CSV', choices=['TSV', 'SQL', 'DB'])
@@ -37,17 +36,6 @@ parser.add_argument('-o', '--output_dir', help='destination directory for output
 parser.add_argument('-u', '--update_lists', action='store_true', help='downloads lists from server')
 
 args = parser.parse_args()
-logging.info("mode:%s", args.mode)
-logging.info("input_dir:%s", args.input_dir)
-logging.info("output_dir:%s", args.output_dir)
-logging.info("update_lists:%s", args.update_lists)
-
-if args.update_lists:
-    from idp.utils import listdownloader
-    logging.info("Downloading IMDB dumps, this may take a while depending on your connection speed")
-    listdownloader.download()
-
-logging.info("Parsing, please wait. This may take very long time...")
 
 # preparing preferences map
 if args.mode:
@@ -61,15 +49,32 @@ else:
     inputDir = INPUT_DIR
 
 if args.input_dir:
-    outputDir = args.output_dir
+    outputDir = os.path.join(args.output_dir,datetime.date.today().isoformat() + ' ImdbParserOutput')
 else:
-    outputDir = OUTPUT_DIR
+    outputDir = os.path.join(OUTPUT_DIR,datetime.date.today().isoformat() + ' ImdbParserOutput')
+
+if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
 
 preferencesMap = {
     "mode":mode, 
     "inputDir": inputDir,
     "outputDir": outputDir
 }
+
+initialize_logger(preferencesMap)
+
+logging.info("mode:%s", args.mode)
+logging.info("input_dir:%s", args.input_dir)
+logging.info("output_dir:%s", args.output_dir)
+logging.info("update_lists:%s", args.update_lists)
+
+if args.update_lists:
+    from idp.utils import listdownloader
+    logging.info("Downloading IMDB dumps, this may take a while depending on your connection speed")
+    listdownloader.download()
+
+logging.info("Parsing, please wait. This may take very long time...")
 
 ParsingHelper.parse_all(preferencesMap)
 
