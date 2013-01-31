@@ -20,7 +20,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import argparse
 import logging
-from idp.utils.loggerprovider import *
+from idp.utils.loggerinitializer import *
 from idp.parser.parsinghelper import ParsingHelper
 from idp.settings import *
 import datetime
@@ -48,10 +48,11 @@ if args.input_dir:
 else:
     inputDir = INPUT_DIR
 
+postfix =  datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S") + ' ImdbParserOutput'
 if args.input_dir:
-    outputDir = os.path.join(args.output_dir,datetime.date.today().isoformat() + ' ImdbParserOutput')
+    outputDir = os.path.join(args.output_dir, postfix)
 else:
-    outputDir = os.path.join(OUTPUT_DIR,datetime.date.today().isoformat() + ' ImdbParserOutput')
+    outputDir = os.path.join(OUTPUT_DIR, postfix)
 
 if not os.path.exists(outputDir):
     os.makedirs(outputDir)
