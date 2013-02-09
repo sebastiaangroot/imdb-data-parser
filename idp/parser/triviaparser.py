@@ -22,14 +22,17 @@ import logging
 
 class TriviaParser(BaseParser):
     """
-    RegExp: #TODO
-    pattern: 
+    RegExp: /((.+?) (.*))|\n/g
+    pattern: ((.+?) (.*))|\n
     flags: g
-        capturing groups: 
+    2 capturing groups: 
+       group 1: (.+?)   type of the line
+       group 2: (.*)    if the line-type is - then this line is plot, not the whole but one line of it
+                        if the line-type is # then this line is movie
     """
   
     # properties
-    baseMatcherPattern = ""
+    baseMatcherPattern = "((.+?) (.*))|\n"
     inputFileName = "trivia.list"
     numberOfLinesToBeSkipped = 15
     scripts = { #TODO: fill 
@@ -37,6 +40,9 @@ class TriviaParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    
+    title = ""
+    trivia = ""
 
     def __init__(self, preferencesMap):
         self.mode = preferencesMap['mode']
@@ -44,15 +50,21 @@ class TriviaParser(BaseParser):
         self.inputFile = self.list.get_input_file()
         self.outputFile = self.list.get_output_file()
 
-        # specific to this class
-        self.title = ""
-        self.plot = ""
-
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
 
         if(isMatch):
-            #TODO
+            if(matcher.group(2) == "#"): #Title
+                self.title = matcher.group(3)
+            elif(matcher.group(2) == "-"): #Descriptive text
+                self.trivia = matcher.group(3)
+            elif(matcher.group(2) == " "):
+                self.trivia += ' ' + matcher.group(3)
+            else:
+                self.outputFile.write(self.title + self.seperator + self.trivia + "\n")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fuckedUpCount += 1
 
     def parse_into_db(self, matcher):
         #TODO
