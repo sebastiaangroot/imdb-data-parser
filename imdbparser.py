@@ -17,6 +17,11 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+"""
+Dealing with ": No such file or directory" error:
+http://stackoverflow.com/a/8735625/878361
+"""
+
 import sys
 import argparse
 import logging
