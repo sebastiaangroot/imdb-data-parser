@@ -20,7 +20,22 @@ from ..utils.filehandler import *
 from ..utils.regexhelper import *
 
 class BaseParser(metaclass=ABCMeta):
-    """Common methods for all parser classes"""
+    """
+    Base class for all parser classes
+
+    This class holds common methods for all parser classes and
+    must be implemented by any Parser class
+
+    Implementing classes' responsibilities are as follows:
+    * Implement parse_into_tsv function
+    * Implement parse_into_db function
+    * Calculate fuckedUpCount and store in self.fuckedUpCount
+    * Define following properties:
+        - baseMatcherPattern
+        - inputFileName
+        - numberOfLinesToBeSkipped
+        - scripts
+    """
 
     seperator = "\t" #TODO: get from settings
 
@@ -51,10 +66,11 @@ class BaseParser(metaclass=ABCMeta):
         counter = 0
         numberOfProcessedLines = 0
 
-        for line in self.inputFile :
+        for line in self.inputFile : #assuming the file is opened in the subclass before here
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
                 #end of data
-                if("--------------" in line):
+                #TODO: get from subclass, assume '-----------' as default
+                if("--------------" in line): 
                     break
 
                 matcher = RegExHelper(line)
