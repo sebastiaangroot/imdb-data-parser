@@ -20,7 +20,9 @@ import logging
 import traceback
 
 class ParsingHelper(object):
-    """ParsingHelper manages parsing order"""
+    """
+    ParsingHelper manages parsing order
+    """
 
     @staticmethod
     def parse_one(item, preferencesMap):
@@ -51,7 +53,6 @@ class ParsingHelper(object):
             traceback.print_exc()
         logging.info("Parsing finished for item: " + item)
  
-
     @staticmethod
     def parse_all(preferencesMap):
         for item in settings.LISTS:
@@ -59,10 +60,13 @@ class ParsingHelper(object):
         logging.info("Parsing finished.")
 
 if __name__ == "__main__":
-    print("hede")
+    """
+    For debugging purposes
+    """
+    print("Parsing only one file for debugging purposes...")
     preferencesMap = {
         "mode":"TSV", 
-        "inputDir": "/home/xaph/imdb_lists/",
-        "outputDir": "/home/xaph/idp_files/"
+        "inputDir": "../../samples/imdb_lists/",
+        "outputDir": "../../samples/idp_files/"
     }
     ParsingHelper.parse_one("movies", preferencesMap)
