@@ -10,6 +10,7 @@ imdb-data-parser is a free software licensed by GPLv3.
 Requirements
 ================
 Python 3.x
+python3-psycopg2
 
 Configuring
 ================
