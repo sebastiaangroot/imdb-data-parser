@@ -2,6 +2,11 @@ import json
 import urllib
 
 class FreebaseAgent(object):
+	"""Helper class to retrieve IMDb ids from freebase.
+
+	Currently only supports movies. TV series support will 
+	hopefully be added if need arises.
+	"""
 
 	def __init__(self):
 		super(FreebaseAgent, self).__init__()
@@ -9,12 +14,21 @@ class FreebaseAgent(object):
 		self.topic_service_url = 'https://www.googleapis.com/freebase/v1/topic' 
 		self.search_service_url = 'https://www.googleapis.com/freebase/v1/search'
 
-	def getImdbId(self):
-		mid = self.getTopicId(args.movieName)
+	def getImdbId(self, movieName):
+		"""Returns the IMDb id of a movie, given its title.
+
+		The returned title is the one with the highest
+		freebase confidence score.
+
+		Returns None if no such movie exists in freebase.
+		"""
+		mid = self.getTopicId(movieName)
 		topic = self.getTopic(mid)
 		return topic
 
 	def getTopicId(self, name, entityType='/film/film'):
+		"""Gets the topic id (aka mid, freebase id) of a title. 
+		"""
 		params = {
 		  'query': name,
 		  'type': entityType,
@@ -29,6 +43,9 @@ class FreebaseAgent(object):
 		return None
 
 	def getTopic(self, mid):
+		"""Gets the IMDb id of a freebase topic. Returns None if no
+		such thing exists.
+		"""
 		params = {
 		  'filter': '/type/object/key'
 		}
@@ -54,4 +71,4 @@ if __name__ == "__main__":
 	print 'freebase topic id (mid) is', mid
 	topic = agent.getTopic(mid)
 	print 'imdb id is', topic, 'so the url is http://www.imdb.com/title/'+topic
-	print agent.getImdbId()
+	print agent.getImdbId(args.movieName)
