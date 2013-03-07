@@ -11,7 +11,6 @@ Requirements
 ================
 * Python 3.x
 * python3-psycopg2
-* google-api-python-client
 
 Configuring
 ================
