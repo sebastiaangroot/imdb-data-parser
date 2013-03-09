@@ -18,6 +18,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 from abc import *
 from ..utils.filehandler import *
 from ..utils.regexhelper import *
+from ..utils.decorators import durationLogged
 
 class BaseParser(metaclass=ABCMeta):
     """
@@ -47,20 +48,16 @@ class BaseParser(metaclass=ABCMeta):
     def parse_into_db(self, matcher):
         raise NotImplemented
 
+    @durationLogged
     def start_processing(self):
-        import time
-
-        startTime = time.time()
+        '''
+        Actual parsing and generation of scripts (tsv & sql) are done here.
+        '''
 
         if(self.mode == "TSV"):
-            #self.outputFile = self.get_output_file()
             pass
         elif(self.mode == "SQL"):
             pass
-            #TODO: drop table if exists
-            #TODO: create table
-            # databaseHelper = DatabaseHelper()
-            # databaseHelper.execute("")
 
         self.fuckedUpCount = 0
         counter = 0
@@ -99,10 +96,9 @@ class BaseParser(metaclass=ABCMeta):
             databaseHelper.close()
 
         # fuckedUpCount is calculated in implementing class
-        logging.info("Finished with " + str(self.fuckedUpCount) + " fucked up line\n")
-        logging.info("Duration: " + str(round(time.time() - startTime)))
+        logging.info("Finished with " + str(self.fuckedUpCount) + " fucked up line")
 
-    # Below methods force associated properties to be defined in any derived class
+    ##### Below methods force associated properties to be defined in any derived class #####
 
     @abstractproperty
     def baseMatcherPattern(self):

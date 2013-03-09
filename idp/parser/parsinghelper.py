@@ -44,6 +44,7 @@ class ParsingHelper(object):
         except Exception as e:
             logging.error("No parser found for: " + item + "\n\tException is: " + str(e))
             return 1
+        logging.info("___________________")
         logging.info("Parsing " + item + "...")
         parser = ParserClass(preferencesMap)
         try:
