@@ -21,6 +21,12 @@ You need to copy this file as `settings.py` and edit this file before running th
     cp settings.py.example settings.py
     your_favourite_editor settings.py
 
+You also need to have dump files at `INPUT_DIR` and you can download dump files from one of the FTP addresses on http://www.imdb.com/interfaces.
+
+Besides that you can make `imdb-data-parser` dowload dumps for you by giving `-u` argument:
+
+	~/imdb-data-parser$ ./imdbparser.py -u
+
 Executing
 ---------
 
