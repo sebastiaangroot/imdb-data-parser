@@ -26,7 +26,7 @@ class MoviesParser(BaseParser):
     RegExp: /((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$/gm
     pattern: ((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$
     flags: gm
-    8 capturing groups: 
+    8 capturing groups:
         group 1: #TITLE (UNIQUE KEY)
         group 2: (.*? \(\S{4,}\))                    movie name + year
         group 3: (\(\S+\))                           type ex:(TV)
@@ -36,15 +36,16 @@ class MoviesParser(BaseParser):
         group 7: (\{\{SUSPENDED\}\})                 is suspended?
         group 8: (.*)                                year
     """
-  
+
     # properties
     baseMatcherPattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
     inputFileName = "movies.list"
+    #FIXME: zafer: I think using a static number is critical for us. If imdb sends a new file with first 10 line fucked then we're also fucked
     numberOfLinesToBeSkipped = 15
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    scripts = {
+        'drop' : 'DROP TABLE IF EXISTS movies;\n',
+        'create' : 'CREATE TABLE movies( id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name VARCHAR(255), year INT );\n',
+        'insert' : 'INSERT INTO movies(name, year) VALUES\n'
     }
 
     def __init__(self, preferencesMap):
@@ -52,6 +53,10 @@ class MoviesParser(BaseParser):
         self.list = IMDBList(self.inputFileName, preferencesMap)
         self.inputFile = self.list.get_input_file()
         self.outputFile = self.list.get_output_file()
+        self.f = open("/home/xaph/imdb.sql", "w", encoding='utf-8')
+        self.f.write(self.scripts['drop'])
+        self.f.write(self.scripts['create'])
+        self.f.write(self.scripts['insert'])
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
@@ -63,5 +68,10 @@ class MoviesParser(BaseParser):
             self.fuckedUpCount += 1
 
     def parse_into_db(self, matcher):
-        #TODO
-        pass
+        isMatch = matcher.match(self.baseMatcherPattern)
+
+        if(isMatch):
+            self.f.write("(\"" + matcher.group(1) + "\", " + matcher.group(8) + "),\n")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fuckedUpCount += 1

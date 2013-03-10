@@ -67,7 +67,7 @@ class BaseParser(metaclass=ABCMeta):
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
                 #end of data
                 #TODO: get from subclass, assume '-----------' as default
-                if("--------------" in line): 
+                if("--------------" in line):
                     break
 
                 matcher = RegExHelper(line)
