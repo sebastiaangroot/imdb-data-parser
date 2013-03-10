@@ -45,6 +45,7 @@ class GenresParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     def __init__(self, preferencesMap):
         super(GenresParser, self).__init__(preferencesMap)

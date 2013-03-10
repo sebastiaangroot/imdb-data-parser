@@ -49,6 +49,7 @@ class ActressesParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     name = ""
     surname = ""

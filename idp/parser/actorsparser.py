@@ -49,6 +49,7 @@ class ActorsParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     name = ""
     surname = ""

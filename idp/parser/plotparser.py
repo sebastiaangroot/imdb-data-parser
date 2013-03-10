@@ -40,6 +40,7 @@ class PlotParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     def __init__(self, preferencesMap):
         super(PlotParser, self).__init__(preferencesMap)

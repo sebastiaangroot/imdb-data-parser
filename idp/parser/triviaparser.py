@@ -40,6 +40,7 @@ class TriviaParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     title = ""
     trivia = ""

@@ -47,6 +47,7 @@ class RatingsParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     def __init__(self, preferencesMap):
         super(RatingsParser, self).__init__(preferencesMap)

@@ -47,6 +47,7 @@ class DirectorsParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
+    endOfDumpDelimiter = ""
 
     name = ""
     surname = ""

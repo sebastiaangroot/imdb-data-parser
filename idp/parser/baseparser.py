@@ -78,8 +78,7 @@ class BaseParser(metaclass=ABCMeta):
         for line in self.inputFile : #assuming the file is opened in the subclass before here
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
                 #end of data
-                #TODO: get from subclass, assume '-----------' as default
-                if("--------------" in line):
+                if( self.endOfDumpDelimiter != "" and self.endOfDumpDelimiter in line):
                     break
 
                 matcher = RegExHelper(line)
@@ -126,4 +125,8 @@ class BaseParser(metaclass=ABCMeta):
 
     @abstractproperty
     def scripts(self):
+        raise NotImplemented
+
+    @abstractproperty
+    def endOfDumpDelimiter(self):
         raise NotImplemented
