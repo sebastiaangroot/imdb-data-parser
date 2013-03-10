@@ -18,6 +18,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 from .baseparser import BaseParser
 from ..utils.filehandler import IMDBList
 import logging
+import re
 
 class MoviesParser(BaseParser):
     """
@@ -71,7 +72,7 @@ class MoviesParser(BaseParser):
         isMatch = matcher.match(self.baseMatcherPattern)
 
         if(isMatch):
-            self.f.write("(\"" + matcher.group(1) + "\", " + matcher.group(8) + "),\n")
+            self.f.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + "),\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fuckedUpCount += 1
