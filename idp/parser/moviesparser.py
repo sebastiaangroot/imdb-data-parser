@@ -45,13 +45,14 @@ class MoviesParser(BaseParser):
     numberOfLinesToBeSkipped = 15
     scripts = {
         'drop' : 'DROP TABLE IF EXISTS movies;\n',
-        'create' : 'CREATE TABLE movies( id INT NOT NULL AUTO_INCREMENT, PRIMARY KEY(id), name VARCHAR(255), year INT );\n',
-        'insert' : 'INSERT INTO movies(name, year) VALUES\n'
+        'create' : 'CREATE TABLE movies(title VARCHAR(255) NOT NULL, year INT, PRIMARY KEY(title)) CHARACTER SET utf8 COLLATE utf8_bin;\n',
+        'insert' : 'INSERT INTO movies(title, year) VALUES\n'
     }
     endOfDumpDelimiter = ""
 
     def __init__(self, preferencesMap):
         super(MoviesParser, self).__init__(preferencesMap)
+        self.first_one=True
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
@@ -66,7 +67,11 @@ class MoviesParser(BaseParser):
         isMatch = matcher.match(self.baseMatcherPattern)
 
         if(isMatch):
-            self.sqlFile.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + "),\n")
+            if(self.first_one):
+                self.sqlFile.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
+                self.first_one=False;
+            else:
+                self.sqlFile.write(",\n(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fuckedUpCount += 1

@@ -96,7 +96,11 @@ class BaseParser(metaclass=ABCMeta):
 
             numberOfProcessedLines +=  1
 
-        self.inputFile.close()
+        if(self.mode == "TSV"):
+            self.inputFile.close()
+        elif(self.mode == "SQL"):
+            self.sqlFile.write(";")
+            self.sqlFile.close()
 
         if 'outputFile' in locals():
             self.outputFile.flush()

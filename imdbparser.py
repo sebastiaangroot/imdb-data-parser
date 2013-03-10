@@ -35,7 +35,7 @@ if sys.version_info.major != 3:
     sys.exit("Error: wrong version! You need to install python3 to run this application properly.")
 
 parser = argparse.ArgumentParser(description="an IMDB data parser")
-parser.add_argument('-m', '--mode', help='Parsing mode, defines output of parsing process. Default: TSV', choices=['TSV', 'SQL', 'DB'])
+parser.add_argument('-m', '--mode', help='Parsing mode, defines output of parsing process. Default: TSV', choices=['TSV', 'SQL'])
 parser.add_argument('-i', '--input_dir', help='source directory of interface lists')
 parser.add_argument('-o', '--output_dir', help='destination directory for outputs')
 parser.add_argument('-u', '--update_lists', action='store_true', help='downloads lists from server')
