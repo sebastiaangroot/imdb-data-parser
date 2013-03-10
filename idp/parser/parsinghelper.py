@@ -58,7 +58,7 @@ class ParsingHelper(object):
     def parse_all(preferencesMap):
         for item in settings.LISTS:
             ParsingHelper.parse_one(item, preferencesMap)
-        logging.info("Parsing finished.")
+        logging.info("All parsing finished.")
 
 if __name__ == "__main__":
     """
