@@ -84,4 +84,5 @@ logging.info("Parsing, please wait. This may take very long time...")
 
 ParsingHelper.parse_all(preferencesMap)
 
-print ("All done, enjoy ;)")
+logging.info("Check out output folder: %s", outputDir)
+print ("All done, enjoy ;)") #don't print this via logger, this is part of the program
