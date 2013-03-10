@@ -53,7 +53,7 @@ if args.input_dir:
 else:
     inputDir = INPUT_DIR
 
-postfix =  datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S") + ' ImdbParserOutput'
+postfix =  datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S") + '_ImdbParserOutput'
 if args.input_dir:
     outputDir = os.path.join(args.output_dir, postfix)
 else:
@@ -63,7 +63,7 @@ if not os.path.exists(outputDir):
     os.makedirs(outputDir)
 
 preferencesMap = {
-    "mode":mode, 
+    "mode":mode,
     "inputDir": inputDir,
     "outputDir": outputDir
 }
