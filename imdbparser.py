@@ -70,9 +70,9 @@ preferencesMap = {
 
 initialize_logger(preferencesMap)
 
-logging.info("mode:%s", args.mode)
-logging.info("input_dir:%s", args.input_dir)
-logging.info("output_dir:%s", args.output_dir)
+logging.info("mode:%s", mode)
+logging.info("input_dir:%s", inputDir)
+logging.info("output_dir:%s", outputDir)
 logging.info("update_lists:%s", args.update_lists)
 
 if args.update_lists:
