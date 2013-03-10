@@ -40,15 +40,16 @@ class GenresParser(BaseParser):
     baseMatcherPattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
     inputFileName = "genres.list"
     numberOfLinesToBeSkipped = 378
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    scripts = {
+        'drop' : 'DROP TABLE IF EXISTS movies_genres;\n',
+        'create' : 'CREATE TABLE movies_genres(movie_title VARCHAR(255) NOT NULL, genre VARCHAR(255)) CHARACTER SET utf8 COLLATE utf8_bin;\n',
+        'insert' : 'INSERT INTO movies_genres(movie_title, genre) VALUES\n'
     }
     endOfDumpDelimiter = ""
 
     def __init__(self, preferencesMap):
         super(GenresParser, self).__init__(preferencesMap)
+        self.first_one=True
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
@@ -60,5 +61,14 @@ class GenresParser(BaseParser):
             self.fuckedUpCount += 1
 
     def parse_into_db(self, matcher):
-        #TODO
-        pass
+        isMatch = matcher.match(self.baseMatcherPattern)
+
+        if(isMatch):
+            if(self.first_one):
+                self.sqlFile.write("(\"" + re.escape(matcher.group(1)) + "\", \"" + matcher.group(8) + "\")")
+                self.first_one=False;
+            else:
+                self.sqlFile.write(",\n(\"" + re.escape(matcher.group(1)) + "\", \"" + matcher.group(8) + "\")")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fuckedUpCount += 1
