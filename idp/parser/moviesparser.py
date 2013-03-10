@@ -50,14 +50,7 @@ class MoviesParser(BaseParser):
     }
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
-        self.f = open("/home/xaph/imdb.sql", "w", encoding='utf-8')
-        self.f.write(self.scripts['drop'])
-        self.f.write(self.scripts['create'])
-        self.f.write(self.scripts['insert'])
+        super(MoviesParser, self).__init__(preferencesMap)
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
@@ -72,7 +65,7 @@ class MoviesParser(BaseParser):
         isMatch = matcher.match(self.baseMatcherPattern)
 
         if(isMatch):
-            self.f.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + "),\n")
+            self.sqlFile.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + "),\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fuckedUpCount += 1

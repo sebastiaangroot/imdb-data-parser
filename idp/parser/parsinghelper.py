@@ -36,9 +36,9 @@ class ParsingHelper(object):
             module = ".".join(parts[:-1])
             m = __import__( module )
             for comp in parts[1:]:
-                m = getattr(m, comp)            
+                m = getattr(m, comp)
             return m
-            
+
         try:
             ParserClass = get_parser_class_for(item)
         except Exception as e:
@@ -53,7 +53,7 @@ class ParsingHelper(object):
             logging.error("Exception occured while parsing item: " + item + "\n\tException is: " + str(e))
             traceback.print_exc()
         logging.info("Parsing finished for item: " + item)
- 
+
     @staticmethod
     def parse_all(preferencesMap):
         for item in settings.LISTS:
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     """
     print("Parsing only one file for debugging purposes...")
     preferencesMap = {
-        "mode":"TSV", 
+        "mode":"TSV",
         "inputDir": "../../samples/imdb_lists/",
         "outputDir": "../../samples/idp_files/"
     }

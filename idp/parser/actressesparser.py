@@ -54,10 +54,7 @@ class ActressesParser(BaseParser):
     surname = ""
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
+        super(ActressesParser, self).__init__(preferencesMap)
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)

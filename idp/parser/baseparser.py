@@ -40,6 +40,18 @@ class BaseParser(metaclass=ABCMeta):
 
     seperator = "\t" #TODO: get from settings
 
+    def __init__(self, preferencesMap):
+        self.mode = preferencesMap['mode']
+        self.list = IMDBList(self.inputFileName, preferencesMap)
+        self.inputFile = self.list.get_input_file()
+        if (self.mode == "TSV"):
+          self.outputFile = self.list.get_output_file()
+        elif (self.mode == "SQL"):
+          self.sqlFile = self.list.get_sql_file()
+          self.sqlFile.write(self.scripts['drop'])
+          self.sqlFile.write(self.scripts['create'])
+          self.sqlFile.write(self.scripts['insert'])
+
     @abstractmethod
     def parse_into_tsv(self, matcher):
         raise NotImplemented

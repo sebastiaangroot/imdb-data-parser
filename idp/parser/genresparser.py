@@ -25,7 +25,7 @@ class GenresParser(BaseParser):
     RegExp: /((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$/gm
     pattern: ((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$
     flags: gm
-    8 capturing groups: 
+    8 capturing groups:
         group 1: #TITLE (UNIQUE KEY)
         group 2: (.*? \(\S{4,}\))                    movie name + year
         group 3: (\(\S+\))                           type ex:(TV)
@@ -34,8 +34,8 @@ class GenresParser(BaseParser):
         group 6: ((\(\S+?\))                         episode number ex: (#3.1)
         group 7: (\{\{SUSPENDED\}\})                 is suspended?
         group 8: (.*)                                genre
-    """    
-  
+    """
+
     # properties
     baseMatcherPattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
     inputFileName = "genres.list"
@@ -47,10 +47,7 @@ class GenresParser(BaseParser):
     }
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
+        super(GenresParser, self).__init__(preferencesMap)
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)

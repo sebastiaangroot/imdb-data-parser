@@ -34,6 +34,9 @@ class IMDBList(object):
     def tsv_path(self):
         return os.path.join(self.preferencesMap['outputDir'], self.listname) + ".tsv"
 
+    def sql_path(self):
+        return os.path.join(self.preferencesMap['outputDir'], self.listname) + ".sql"
+
     def get_input_file(self):
         fullFilePath = self.full_path()
         logging.info("Trying to find file: %s", fullFilePath)
@@ -55,8 +58,10 @@ class IMDBList(object):
         raise RuntimeError("FileNotFoundError: " + fullFilePath)
 
     def get_output_file(self):
-        return open(self.tsv_path(), "w", encoding='iso-8859-1')
+        return open(self.tsv_path(), "w", encoding='utf-8')
 
+    def get_sql_file(self):
+        return open(self.sql_path(), "w", encoding='utf-8')
 
 
 def get_full_path(filename, isCompressed = False):

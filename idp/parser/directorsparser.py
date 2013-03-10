@@ -37,7 +37,7 @@ class DirectorsParser(BaseParser):
         group 9: (\(.*\))                            info
         group 10: ()
     """
-  
+
     # properties
     baseMatcherPattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$'
     inputFileName = "directors.list"
@@ -52,10 +52,7 @@ class DirectorsParser(BaseParser):
     surname = ""
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
+        super(DirectorsParser, self).__init__(preferencesMap)
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)
@@ -69,7 +66,7 @@ class DirectorsParser(BaseParser):
                 else:
                     self.name = namelist[0]
                     self.surname = ""
-                    
+
             self.outputFile.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass

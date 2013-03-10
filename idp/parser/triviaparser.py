@@ -25,12 +25,12 @@ class TriviaParser(BaseParser):
     RegExp: /((.+?) (.*))|\n/g
     pattern: ((.+?) (.*))|\n
     flags: g
-    2 capturing groups: 
+    2 capturing groups:
        group 1: (.+?)   type of the line
        group 2: (.*)    if the line-type is - then this line is plot, not the whole but one line of it
                         if the line-type is # then this line is movie
     """
-  
+
     # properties
     baseMatcherPattern = "((.+?) (.*))|\n"
     inputFileName = "trivia.list"
@@ -40,15 +40,12 @@ class TriviaParser(BaseParser):
         'create' : '',
         'insert' : ''
     }
-    
+
     title = ""
     trivia = ""
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
+        super(TriviaParser, self).__init__(preferencesMap)
 
     def parse_into_tsv(self, matcher):
         isMatch = matcher.match(self.baseMatcherPattern)

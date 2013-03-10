@@ -42,10 +42,7 @@ class PlotParser(BaseParser):
     }
 
     def __init__(self, preferencesMap):
-        self.mode = preferencesMap['mode']
-        self.list = IMDBList(self.inputFileName, preferencesMap)
-        self.inputFile = self.list.get_input_file()
-        self.outputFile = self.list.get_output_file()
+        super(PlotParser, self).__init__(preferencesMap)
 
         # specific to this class
         self.title = ""
