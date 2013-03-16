@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 from .baseparser import BaseParser
 from ..utils.filehandler import IMDBList
+from ..utils.dbscripthelper import DbScriptHelper
 import logging
 import re
 
@@ -43,10 +44,19 @@ class MoviesParser(BaseParser):
     inputFileName = "movies.list"
     #FIXME: zafer: I think using a static number is critical for us. If imdb sends a new file with first 10 line fucked then we're also fucked
     numberOfLinesToBeSkipped = 15
-    scripts = {
-        'drop' : 'DROP TABLE IF EXISTS movies;\n',
-        'create' : 'CREATE TABLE movies(title VARCHAR(255) NOT NULL, year INT, PRIMARY KEY(title)) CHARACTER SET utf8 COLLATE utf8_bin;\n',
-        'insert' : 'INSERT INTO movies(title, year) VALUES\n'
+    dbtableinfo = {
+        'tablename' : 'movies',
+        'columns' : [
+            {
+                'colname' : 'title',
+                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
+            },
+            {
+                'colname' : 'year',
+                'colinfo' : DbScriptHelper.keywords['number']
+            }
+        ],
+        'constraints' : 'PRIMARY KEY(title)'
     }
     endOfDumpDelimiter = ""
 

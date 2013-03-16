@@ -19,6 +19,7 @@ from abc import *
 from ..utils.filehandler import *
 from ..utils.regexhelper import *
 from ..utils.decorators import durationLogged
+from ..utils.dbscripthelper import DbScriptHelper
 
 class BaseParser(metaclass=ABCMeta):
     """
@@ -48,9 +49,10 @@ class BaseParser(metaclass=ABCMeta):
           self.outputFile = self.list.get_output_file()
         elif (self.mode == "SQL"):
           self.sqlFile = self.list.get_sql_file()
-          self.sqlFile.write(self.scripts['drop'])
-          self.sqlFile.write(self.scripts['create'])
-          self.sqlFile.write(self.scripts['insert'])
+          self.scripthelper = DbScriptHelper(self.dbtableinfo)
+          self.sqlFile.write(self.scripthelper.scripts['drop'])
+          self.sqlFile.write(self.scripthelper.scripts['create'])
+          self.sqlFile.write(self.scripthelper.scripts['insert'])
 
     @abstractmethod
     def parse_into_tsv(self, matcher):
@@ -66,11 +68,6 @@ class BaseParser(metaclass=ABCMeta):
         Actual parsing and generation of scripts (tsv & sql) are done here.
         '''
 
-        if(self.mode == "TSV"):
-            pass
-        elif(self.mode == "SQL"):
-            pass
-
         self.fuckedUpCount = 0
         counter = 0
         numberOfProcessedLines = 0
@@ -78,7 +75,7 @@ class BaseParser(metaclass=ABCMeta):
         for line in self.inputFile : #assuming the file is opened in the subclass before here
             if(numberOfProcessedLines >= self.numberOfLinesToBeSkipped):
                 #end of data
-                if( self.endOfDumpDelimiter != "" and self.endOfDumpDelimiter in line):
+                if(self.endOfDumpDelimiter != "" and self.endOfDumpDelimiter in line):
                     break
 
                 matcher = RegExHelper(line)
@@ -96,19 +93,15 @@ class BaseParser(metaclass=ABCMeta):
 
             numberOfProcessedLines +=  1
 
-        if(self.mode == "TSV"):
-            self.inputFile.close()
-        elif(self.mode == "SQL"):
+        self.inputFile.close()
+
+        if(self.mode == "SQL"):
             self.sqlFile.write(";")
             self.sqlFile.close()
 
         if 'outputFile' in locals():
             self.outputFile.flush()
             self.outputFile.close()
-
-        if 'databaseHelper' in locals():
-            databaseHelper.commit()
-            databaseHelper.close()
 
         # fuckedUpCount is calculated in implementing class
         logging.info("Finished with " + str(self.fuckedUpCount) + " fucked up line")
@@ -128,7 +121,7 @@ class BaseParser(metaclass=ABCMeta):
         raise NotImplemented
 
     @abstractproperty
-    def scripts(self):
+    def dbtableinfo(self):
         raise NotImplemented
 
     @abstractproperty
