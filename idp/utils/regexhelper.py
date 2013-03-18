@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 
+
 class RegExHelper(object):
     def __init__(self, matchstring):
         self.matchstring = matchstring
@@ -26,7 +27,7 @@ class RegExHelper(object):
         return bool(self.rematch)
 
     def group(self,i):
-        if self.rematch.group(i) is None :
+        if self.rematch.group(i) is None:
             return ""
         else:
             return self.rematch.group(i)

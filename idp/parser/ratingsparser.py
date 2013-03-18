@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .baseparser import BaseParser
-from ..utils.regexhelper import *
-from ..utils.filehandler import IMDBList
-import logging
+from .baseparser import *
+
 
 class RatingsParser(BaseParser):
     """
@@ -39,24 +37,29 @@ class RatingsParser(BaseParser):
     """
   
     # properties
-    baseMatcherPattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$"
-    inputFileName = "ratings.list"
-    numberOfLinesToBeSkipped = 28
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    base_matcher_pattern = "\s*(\S*)\s*(\S*)\s*(\S*)\s*((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)$"
+    input_file_name = "ratings.list"
+    number_of_lines_to_be_skipped = 28
+    db_table_info = {
+        'tablename' : 'ratings',
+        'columns' : [
+            {
+                'colname' : '',
+                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
+            }
+        ],
+        'constraints' : ''
     }
-    endOfDumpDelimiter = ""
+    end_of_dump_delimiter = ""
 
-    def __init__(self, preferencesMap):
-        super(RatingsParser, self).__init__(preferencesMap)
+    def __init__(self, preferences_map):
+        super(RatingsParser, self).__init__(preferences_map)
 
     def parse_into_tsv(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
-            self.outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
+        if(is_match):
+            self.tsv_file.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fuckedUpCount += 1

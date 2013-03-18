@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .baseparser import BaseParser
-from ..utils.regexhelper import *
-from ..utils.filehandler import IMDBList
-import logging
+from .baseparser import *
+
 
 class TriviaParser(BaseParser):
     """
@@ -32,26 +30,31 @@ class TriviaParser(BaseParser):
     """
 
     # properties
-    baseMatcherPattern = "((.+?) (.*))|\n"
-    inputFileName = "trivia.list"
-    numberOfLinesToBeSkipped = 15
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    base_matcher_pattern = "((.+?) (.*))|\n"
+    input_file_name = "trivia.list"
+    number_of_lines_to_be_skipped = 15
+    db_table_info = {
+        'tablename' : 'trivia',
+        'columns' : [
+            {
+                'colname' : '',
+                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
+            }
+        ],
+        'constraints' : ''
     }
-    endOfDumpDelimiter = ""
+    end_of_dump_delimiter = ""
 
     title = ""
     trivia = ""
 
-    def __init__(self, preferencesMap):
-        super(TriviaParser, self).__init__(preferencesMap)
+    def __init__(self, preferences_map):
+        super(TriviaParser, self).__init__(preferences_map)
 
     def parse_into_tsv(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
+        if(is_match):
             if(matcher.group(2) == "#"): #Title
                 self.title = matcher.group(3)
             elif(matcher.group(2) == "-"): #Descriptive text
@@ -59,10 +62,10 @@ class TriviaParser(BaseParser):
             elif(matcher.group(2) == " "):
                 self.trivia += ' ' + matcher.group(3)
             else:
-                self.outputFile.write(self.title + self.seperator + self.trivia + "\n")
+                self.tsv_file.write(self.title + self.seperator + self.trivia + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
-            self.fuckedUpCount += 1
+            self.fucked_up_count += 1
 
     def parse_into_db(self, matcher):
         #TODO

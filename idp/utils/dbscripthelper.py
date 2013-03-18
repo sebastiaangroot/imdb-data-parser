@@ -17,20 +17,21 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 
+
 class DbScriptHelper(object):
     keywords = {
-        'string' : 'VARCHAR2',
-        'number' : 'NUMBER',
-        'date' : 'DATE'
+        'string': "VARCHAR",
+        'number': "NUMERIC",
+        'date': "DATE"
     }
 
     scripts = {
-        'drop' : 'DROP TABLE ',
-        'create' : 'CREATE TABLE ',
-        'insert' : 'INSERT INTO '
+        'drop': "DROP TABLE ",
+        'create': "CREATE TABLE ",
+        'insert': "INSERT INTO "
     }
 
-    def __init__(self, dbtableinfo):
-        self.scripts['drop'] += dbtableinfo['tablename'] + ';' + os.linesep
-        self.scripts['create'] += dbtableinfo['tablename'] + '(' + ', '.join(filter(None, (', '.join('%s %s' % (col['colname'], col['colinfo']) for col in dbtableinfo['columns']), dbtableinfo['constraints']))) + ') CHARACTER SET utf8 COLLATE utf8_bin;' + os.linesep
-        self.scripts['insert'] += dbtableinfo['tablename'] + '(' + ', '.join(col['colname'] for col in dbtableinfo['columns']) + ') VALUES' + os.linesep
+    def __init__(self, db_table_info):
+        self.scripts['drop'] += db_table_info['tablename'] + ";" + os.linesep
+        self.scripts['create'] += db_table_info['tablename'] + "(" + ', '.join(filter(None, (', '.join('%s %s' % (col['colname'], col['colinfo']) for col in db_table_info['columns']), db_table_info['constraints']))) + ") CHARACTER SET utf8 COLLATE utf8_bin;" + os.linesep
+        self.scripts['insert'] += db_table_info['tablename'] + "(" + ', '.join(col['colname'] for col in db_table_info['columns']) + ") VALUES" + os.linesep

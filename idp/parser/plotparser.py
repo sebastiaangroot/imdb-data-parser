@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .baseparser import BaseParser
-from ..utils.regexhelper import *
-from ..utils.filehandler import IMDBList
-import logging
+from .baseparser import *
+
 
 class PlotParser(BaseParser):
     """
@@ -32,27 +30,32 @@ class PlotParser(BaseParser):
     """
   
     # properties
-    baseMatcherPattern = "(.+?): (.*)"
-    inputFileName = "plot.list"
-    numberOfLinesToBeSkipped = 15
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    base_matcher_pattern = "(.+?): (.*)"
+    input_file_name = "plot.list"
+    number_of_lines_to_be_skipped = 15
+    db_table_info = {
+        'tablename' : 'plot',
+        'columns' : [
+            {
+                'colname' : '',
+                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
+            }
+        ],
+        'constraints' : ''
     }
-    endOfDumpDelimiter = ""
+    end_of_dump_delimiter = ""
 
-    def __init__(self, preferencesMap):
-        super(PlotParser, self).__init__(preferencesMap)
+    def __init__(self, preferences_map):
+        super(PlotParser, self).__init__(preferences_map)
 
         # specific to this class
         self.title = ""
         self.plot = ""
 
     def parse_into_tsv(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
+        if(is_match):
             if(matcher.group(1) == "MV"): #Title
                 if(self.title != ""):
                     self.outputFile.write(self.title + self.seperator + self.plot + "\n")

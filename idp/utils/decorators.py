@@ -18,15 +18,16 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 import datetime
 import logging
 
-def durationLogged(func):
-	'''
-	As the name suggests, calculates the execution duration of the function which is annotated by this decorator
-	'''
-	def inner(*args, **kwargs):
-		startTime = datetime.datetime.now()
-		retVal = func(*args, **kwargs)
-		endTime = datetime.datetime.now()
-		duration = (endTime - startTime).total_seconds() #difference of 2 datetime is a timedelta
-		logging.info("Parsing took " + str(duration) + " seconds")
-		return retVal
-	return inner
+
+def duration_logged(func):
+    '''
+    As the name suggests, calculates the execution duration of the function which is annotated by this decorator
+    '''
+    def inner(*args, **kwargs):
+        start_time = datetime.datetime.now()
+        ret_val = func(*args, **kwargs)
+        end_time = datetime.datetime.now()
+        duration = (end_time - start_time).total_seconds() #difference of 2 datetime is a timedelta
+        logging.info("Parsing took " + str(duration) + " seconds")
+        return ret_val
+    return inner

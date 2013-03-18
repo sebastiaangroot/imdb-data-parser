@@ -15,9 +15,10 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from idp import settings
 import logging
 import traceback
+from idp import settings
+
 
 class ParsingHelper(object):
     """
@@ -25,13 +26,13 @@ class ParsingHelper(object):
     """
 
     @staticmethod
-    def parse_one(item, preferencesMap):
+    def parse_one(item, preferences_map):
 
-        def get_parser_class_for(itemName):
+        def get_parser_class_for(item_name):
             """
             Thanks to http://stackoverflow.com/a/452981
             """
-            kls = "idp.parser." + itemName + "parser." + itemName.title() + "Parser"
+            kls = "idp.parser." + item_name + "parser." + item_name.title() + "Parser"
             parts = kls.split('.')
             module = ".".join(parts[:-1])
             m = __import__( module )
@@ -46,7 +47,7 @@ class ParsingHelper(object):
             return 1
         logging.info("___________________")
         logging.info("Parsing " + item + "...")
-        parser = ParserClass(preferencesMap)
+        parser = ParserClass(preferences_map)
         try:
             parser.start_processing()
         except Exception as e:
@@ -55,9 +56,9 @@ class ParsingHelper(object):
         logging.info("Parsing finished for item: " + item)
 
     @staticmethod
-    def parse_all(preferencesMap):
+    def parse_all(preferences_map):
         for item in settings.LISTS:
-            ParsingHelper.parse_one(item, preferencesMap)
+            ParsingHelper.parse_one(item, preferences_map)
         logging.info("All parsing finished.")
 
 if __name__ == "__main__":
@@ -65,9 +66,9 @@ if __name__ == "__main__":
     For debugging purposes
     """
     print("Parsing only one file for debugging purposes...")
-    preferencesMap = {
+    preferences_map = {
         "mode":"TSV",
         "inputDir": "../../samples/imdb_lists/",
         "outputDir": "../../samples/idp_files/"
     }
-    ParsingHelper.parse_one("movies", preferencesMap)
+    ParsingHelper.parse_one("movies", preferences_map)

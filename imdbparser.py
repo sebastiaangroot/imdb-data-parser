@@ -24,11 +24,11 @@ http://stackoverflow.com/a/8735625/878361
 
 import sys
 import argparse
-import logging
+import datetime
 from idp.utils.loggerinitializer import *
 from idp.parser.parsinghelper import ParsingHelper
 from idp.settings import *
-import datetime
+
 
 # check python version
 if sys.version_info.major != 3:
@@ -49,30 +49,30 @@ else: #default
     mode = "TSV"
 
 if args.input_dir:
-    inputDir = args.input_dir
+    input_dir = args.input_dir
 else:
-    inputDir = INPUT_DIR
+    input_dir = INPUT_DIR
 
 postfix =  datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S") + '_ImdbParserOutput'
 if args.input_dir:
-    outputDir = os.path.join(args.output_dir, postfix)
+    output_dir = os.path.join(args.output_dir, postfix)
 else:
-    outputDir = os.path.join(OUTPUT_DIR, postfix)
+    output_dir = os.path.join(OUTPUT_DIR, postfix)
 
-if not os.path.exists(outputDir):
-    os.makedirs(outputDir)
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
-preferencesMap = {
+preferences_map = {
     "mode":mode,
-    "inputDir": inputDir,
-    "outputDir": outputDir
+    "input_dir": input_dir,
+    "output_dir": output_dir
 }
 
-initialize_logger(preferencesMap)
+initialize_logger(preferences_map)
 
 logging.info("mode:%s", mode)
-logging.info("input_dir:%s", inputDir)
-logging.info("output_dir:%s", outputDir)
+logging.info("input_dir:%s", input_dir)
+logging.info("output_dir:%s", output_dir)
 logging.info("update_lists:%s", args.update_lists)
 
 if args.update_lists:
@@ -82,7 +82,7 @@ if args.update_lists:
 
 logging.info("Parsing, please wait. This may take very long time...")
 
-ParsingHelper.parse_all(preferencesMap)
+ParsingHelper.parse_all(preferences_map)
 
-logging.info("Check out output folder: %s", outputDir)
+logging.info("Check out output folder: %s", output_dir)
 print ("All done, enjoy ;)") #don't print this via logger, this is part of the program

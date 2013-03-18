@@ -15,10 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .baseparser import BaseParser
-from ..utils.regexhelper import *
-from ..utils.filehandler import IMDBList
-import logging
+from .baseparser import *
+
 
 class DirectorsParser(BaseParser):
     """
@@ -39,26 +37,31 @@ class DirectorsParser(BaseParser):
     """
 
     # properties
-    baseMatcherPattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$'
-    inputFileName = "directors.list"
-    numberOfLinesToBeSkipped = 235
-    scripts = { #TODO: fill 
-        'drop' : '',
-        'create' : '',
-        'insert' : ''
+    base_matcher_pattern = '(.*?)\t+((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\s*(\(.*\)|EDIT)?\s*(<.*>)?$'
+    input_file_name = "directors.list"
+    number_of_lines_to_be_skipped = 235
+    db_table_info = {
+        'tablename' : 'directors',
+        'columns' : [
+            {
+                'colname' : '',
+                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
+            }
+        ],
+        'constraints' : ''
     }
-    endOfDumpDelimiter = ""
+    end_of_dump_delimiter = ""
 
     name = ""
     surname = ""
 
-    def __init__(self, preferencesMap):
-        super(DirectorsParser, self).__init__(preferencesMap)
+    def __init__(self, preferences_map):
+        super(DirectorsParser, self).__init__(preferences_map)
 
     def parse_into_tsv(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
+        if(is_match):
             if(len(matcher.group(1).strip()) > 0):
                 namelist = matcher.group(1).split(', ')
                 if(len(namelist) == 2):
@@ -68,12 +71,12 @@ class DirectorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
 
-            self.outputFile.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + "\n")
+            self.tsv_file.write(self.name + self.seperator + self.surname + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
-            self.fuckedUpCount += 1
+            self.fucked_up_count += 1
 
     def parse_into_db(self, matcher):
         #TODO

@@ -15,11 +15,8 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from .baseparser import BaseParser
-from ..utils.filehandler import IMDBList
-from ..utils.dbscripthelper import DbScriptHelper
-import logging
-import re
+from .baseparser import *
+
 
 class MoviesParser(BaseParser):
     """
@@ -40,11 +37,11 @@ class MoviesParser(BaseParser):
     """
 
     # properties
-    baseMatcherPattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
-    inputFileName = "movies.list"
+    base_matcher_pattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
+    input_file_name = "movies.list"
     #FIXME: zafer: I think using a static number is critical for us. If imdb sends a new file with first 10 line fucked then we're also fucked
-    numberOfLinesToBeSkipped = 15
-    dbtableinfo = {
+    number_of_lines_to_be_skipped = 15
+    db_table_info = {
         'tablename' : 'movies',
         'columns' : [
             {
@@ -58,30 +55,30 @@ class MoviesParser(BaseParser):
         ],
         'constraints' : 'PRIMARY KEY(title)'
     }
-    endOfDumpDelimiter = ""
+    end_of_dump_delimiter = ""
 
-    def __init__(self, preferencesMap):
-        super(MoviesParser, self).__init__(preferencesMap)
+    def __init__(self, preferences_map):
+        super(MoviesParser, self).__init__(preferences_map)
         self.first_one=True
 
     def parse_into_tsv(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
-            self.outputFile.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + "\n")
+        if(is_match):
+            self.tsv_file.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
-            self.fuckedUpCount += 1
+            self.fucked_up_count += 1
 
     def parse_into_db(self, matcher):
-        isMatch = matcher.match(self.baseMatcherPattern)
+        is_match = matcher.match(self.base_matcher_pattern)
 
-        if(isMatch):
+        if(is_match):
             if(self.first_one):
-                self.sqlFile.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
+                self.sql_file.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
                 self.first_one=False;
             else:
-                self.sqlFile.write(",\n(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
+                self.sql_file.write(",\n(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
-            self.fuckedUpCount += 1
+            self.fucked_up_count += 1
