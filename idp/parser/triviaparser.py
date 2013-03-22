@@ -50,6 +50,7 @@ class TriviaParser(BaseParser):
 
     def __init__(self, preferences_map):
         super(TriviaParser, self).__init__(preferences_map)
+        self.first_one = True
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)

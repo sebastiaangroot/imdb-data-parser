@@ -41,24 +41,22 @@ class GenresParser(BaseParser):
     db_table_info = {
         'tablename' : 'genres',
         'columns' : [
-            {
-                'colname' : '',
-                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
-            }
+            {'colname' : 'title', 'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'},
+            {'colname' : 'genre', 'colinfo' : DbScriptHelper.keywords['string'] + '(127)'}
         ],
-        'constraints' : ''
+        'constraints' : 'PRIMARY KEY(title)'
     }
     end_of_dump_delimiter = ""
 
     def __init__(self, preferences_map):
         super(GenresParser, self).__init__(preferences_map)
-        self.first_one=True
+        self.first_one = True
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.tsv_file.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + "\n")
+            self.tsv_file.write(self.concat_regex_groups([1,8], None, matcher) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
@@ -68,10 +66,10 @@ class GenresParser(BaseParser):
 
         if(is_match):
             if(self.first_one):
-                self.sql_file.write("(\"" + re.escape(matcher.group(1)) + "\", \"" + matcher.group(8) + "\")")
-                self.first_one=False;
+                self.sql_file.write("(" + self.concat_regex_groups([1,8], [0,1], matcher) + ")")
+                self.first_one = False;
             else:
-                self.sql_file.write(",\n(\"" + re.escape(matcher.group(1)) + "\", \"" + matcher.group(8) + "\")")
+                self.sql_file.write(",\n(" + self.concat_regex_groups([1,8], [0,1], matcher) + ")")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1

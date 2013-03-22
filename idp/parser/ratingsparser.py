@@ -43,27 +43,37 @@ class RatingsParser(BaseParser):
     db_table_info = {
         'tablename' : 'ratings',
         'columns' : [
-            {
-                'colname' : '',
-                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
-            }
+            {'colname' : 'distribution', 'colinfo' : DbScriptHelper.keywords['string'] + '(127) NOT NULL'},
+            {'colname' : 'votes', 'colinfo' : DbScriptHelper.keywords['string'] + '(127)'},
+            {'colname' : 'rank', 'colinfo' : DbScriptHelper.keywords['string'] + '(127)'},
+            {'colname' : 'title', 'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'}
         ],
-        'constraints' : ''
+        'constraints' : 'PRIMARY KEY(title)'
     }
     end_of_dump_delimiter = ""
 
     def __init__(self, preferences_map):
         super(RatingsParser, self).__init__(preferences_map)
+        self.first_one = True
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.tsv_file.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(4) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(8) + self.seperator + matcher.group(8) + self.seperator + matcher.group(9) + self.seperator + matcher.group(10) + "\n")
+            self.tsv_file.write(self.concat_regex_groups([1,2,3,4], None, matcher) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
-            self.fuckedUpCount += 1
+            self.fucked_up_count += 1
 
     def parse_into_db(self, matcher):
-        #TODO
-        pass
+        is_match = matcher.match(self.base_matcher_pattern)
+
+        if(is_match):
+            if(self.first_one):
+                self.sql_file.write("(" + self.concat_regex_groups([1,2,3,4], [0,1,2,3], matcher) + ")")
+                self.first_one = False;
+            else:
+                self.sql_file.write(",\n(" + self.concat_regex_groups([1,2,3,4], [0,1,2,3], matcher) + ")")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fucked_up_count += 1

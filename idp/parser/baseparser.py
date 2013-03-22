@@ -110,6 +110,19 @@ class BaseParser(metaclass=ABCMeta):
         # fuckedUpCount is calculated in implementing class
         logging.info("Finished with " + str(self.fucked_up_count) + " fucked up line")
 
+    def concat_regex_groups(self, group_list, col_list, matcher):
+        ret_val = ""
+        if col_list == None:
+            ret_val = self.seperator.join('%s' % (matcher.group(i)) for i in group_list)
+        else:
+            for i in range(len(group_list)):
+                if DbScriptHelper.keywords['string'] in self.db_table_info['columns'][col_list[i]]['colinfo']:
+                    ret_val += "\"" + re.escape(matcher.group(group_list[i])) + "\", "
+                else:
+                    ret_val += matcher.group(group_list[i]) + ", "
+            ret_val = ret_val[:-2]
+        return ret_val
+
     ##### Below methods force associated properties to be defined in any derived class #####
 
     @abstractproperty

@@ -36,17 +36,16 @@ class PlotParser(BaseParser):
     db_table_info = {
         'tablename' : 'plot',
         'columns' : [
-            {
-                'colname' : '',
-                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
-            }
+            {'colname' : 'title', 'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'},
+            {'colname' : 'plot', 'colinfo' : DbScriptHelper.keywords['string'] + '(4000)'}
         ],
-        'constraints' : ''
+        'constraints' : 'PRIMARY KEY(title)'
     }
     end_of_dump_delimiter = ""
 
     def __init__(self, preferences_map):
         super(PlotParser, self).__init__(preferences_map)
+        self.first_one = True
 
         # specific to this class
         self.title = ""
@@ -58,7 +57,7 @@ class PlotParser(BaseParser):
         if(is_match):
             if(matcher.group(1) == "MV"): #Title
                 if(self.title != ""):
-                    self.outputFile.write(self.title + self.seperator + self.plot + "\n")
+                    self.tsv_file.write(self.title + self.seperator + self.plot + "\n")
 
                 self.plot = ""
                 self.title = matcher.group(2)
@@ -82,5 +81,23 @@ class PlotParser(BaseParser):
         """
 
     def parse_into_db(self, matcher):
-        #TODO
-        pass
+        is_match = matcher.match(self.base_matcher_pattern)
+
+        if(is_match):
+            if(matcher.group(1) == "MV"): #Title
+                if(self.title != ""):
+                    if(self.first_one):
+                        self.sql_file.write("(\"" + self.title + "\", \"" + self.plot + "\")")
+                        self.first_one = False;
+                    else:
+                        self.sql_file.write(",\n(\"" + self.title + "\", \"" + self.plot + "\")")
+
+                self.plot = ""
+                self.title = matcher.group(2)
+
+            elif(matcher.group(1) == "PL"): #Descriptive text
+                self.plot += matcher.group(2)
+            elif(matcher.group(1) == "BY"):
+                pass
+            else:
+                logging.critical("Unhandled abbreviation: " + matcher.group(1) + " in " + line)

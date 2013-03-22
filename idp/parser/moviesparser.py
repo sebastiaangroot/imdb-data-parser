@@ -44,14 +44,13 @@ class MoviesParser(BaseParser):
     db_table_info = {
         'tablename' : 'movies',
         'columns' : [
-            {
-                'colname' : 'title',
-                'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'
-            },
-            {
-                'colname' : 'year',
-                'colinfo' : DbScriptHelper.keywords['number']
-            }
+            {'colname' : 'title', 'colinfo' : DbScriptHelper.keywords['string'] + '(255) NOT NULL'},
+            {'colname' : 'full_name', 'colinfo' : DbScriptHelper.keywords['string'] + '(127)'},
+            {'colname' : 'type', 'colinfo' : DbScriptHelper.keywords['string'] + '(20)'},
+            {'colname' : 'ep_name', 'colinfo' : DbScriptHelper.keywords['string'] + '(127)'},
+            {'colname' : 'ep_num', 'colinfo' : DbScriptHelper.keywords['string'] + '(20)'},
+            {'colname' : 'suspended', 'colinfo' : DbScriptHelper.keywords['string'] + '(20)'},
+            {'colname' : 'year', 'colinfo' : DbScriptHelper.keywords['string'] + '(20)'}
         ],
         'constraints' : 'PRIMARY KEY(title)'
     }
@@ -59,13 +58,13 @@ class MoviesParser(BaseParser):
 
     def __init__(self, preferences_map):
         super(MoviesParser, self).__init__(preferences_map)
-        self.first_one=True
+        self.first_one = True
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.tsv_file.write(matcher.group(1) + self.seperator + matcher.group(2) + self.seperator + matcher.group(3) + self.seperator + matcher.group(5) + self.seperator + matcher.group(6) + self.seperator + matcher.group(7) + self.seperator + matcher.group(8) + "\n")
+            self.tsv_file.write(self.concat_regex_groups([1,2,3,5,6,7,8], None, matcher) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
@@ -75,10 +74,10 @@ class MoviesParser(BaseParser):
 
         if(is_match):
             if(self.first_one):
-                self.sql_file.write("(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
-                self.first_one=False;
+                self.sql_file.write("(" + self.concat_regex_groups([1,2,3,5,6,7,8], [0,1,2,3,4,5,6], matcher) + ")")
+                self.first_one = False;
             else:
-                self.sql_file.write(",\n(\"" + re.escape(matcher.group(1)) + "\", " + matcher.group(8) + ")")
+                self.sql_file.write(",\n(" + self.concat_regex_groups([1,2,3,5,6,7,8], [0,1,2,3,4,5,6], matcher) + ")")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
