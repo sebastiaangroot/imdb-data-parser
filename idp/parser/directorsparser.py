@@ -72,7 +72,7 @@ class DirectorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
 
-            self.tsv_file.write(self.name + self.seperator + self.surname + self.seperator + self.concat_regex_groups([10,11], None, matcher) + "\n")
+            self.tsv_file.write(self.name + self.seperator + self.surname + self.seperator + self.concat_regex_groups([2,9], None, matcher) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:
