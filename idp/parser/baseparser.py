@@ -53,7 +53,10 @@ class BaseParser(metaclass=ABCMeta):
           self.tsv_file = self.filehandler.get_tsv_file()
         elif (self.mode == "SQL"):
           self.sql_file = self.filehandler.get_sql_file()
-          self.sql_file.write(DbScriptHelper.initial_sql_script(self.db_table_info))
+          self.scripthelper = DbScriptHelper(self.db_table_info)
+          self.sql_file.write(self.scripthelper.scripts['drop'])
+          self.sql_file.write(self.scripthelper.scripts['create'])
+          self.sql_file.write(self.scripthelper.scripts['insert'])
 
     @abstractmethod
     def parse_into_tsv(self, matcher):

@@ -32,6 +32,11 @@ class DbScriptHelper(object):
     }
 
     def __init__(self, db_table_info):
+        self.scripts = {
+            'drop': "DROP TABLE ",
+            'create': "CREATE TABLE ",
+            'insert': "INSERT INTO "
+        }
         self.scripts['drop'] += db_table_info['tablename'] + ";" + os.linesep
         self.scripts['create'] += db_table_info['tablename'] + "(" + ', '.join(filter(None, (', '.join('%s %s' % (col['colname'], col['colinfo']) for col in db_table_info['columns']), db_table_info['constraints']))) + ") CHARACTER SET utf8 COLLATE utf8_bin;" + os.linesep
         self.scripts['insert'] += db_table_info['tablename'] + "(" + ', '.join(col['colname'] for col in db_table_info['columns']) + ") VALUES" + os.linesep
