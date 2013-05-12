@@ -40,7 +40,7 @@ class FileHandler(object):
         logging.info("Trying to find file: %s", full_file_path)
         if os.path.isfile(full_file_path):
             logging.info("File found: %s", full_file_path)
-            return open(full_file_path, "r", encoding='utf-8')
+            return open(full_file_path, "r", encoding='iso-8859-1')
 
         logging.error("File cannot be found: %s", full_file_path)
 
@@ -48,7 +48,7 @@ class FileHandler(object):
         if os.path.isfile(full_file_path + ".gz"):
             logging.info("File found: %s", full_file_path + ".gz")
             if extract(full_file_path + ".gz") == 0:
-                return open(full_file_path, "r", encoding='utf-8')
+                return open(full_file_path, "r", encoding='iso-8859-1')
             else:
                 raise RuntimeError("Unknown error occured")
 
