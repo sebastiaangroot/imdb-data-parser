@@ -83,3 +83,13 @@ class FileHandler(object):
             logging.error("Error when extracting list: " + gzip_path + "\n\t" + str(e))
             return 1
         return 0
+
+    def get_full_path(filename, isCompressed = False):
+	    """
+	    constructs a full path for a dump file in the INPUT_DIR
+	    filename should be without '.list'
+	    """
+	    if(isCompressed):
+	        return os.path.join(INPUT_DIR, filename) + ".gz"
+	    else:
+	        return os.path.join(INPUT_DIR, filename)
