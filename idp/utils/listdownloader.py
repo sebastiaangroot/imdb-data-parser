@@ -34,7 +34,7 @@ def download():
     for list_item in LISTS:
         try:
             logging.info("Started to download list:" + list_item)
-            r = ftp.retrbinary("RETR " + INTERFACES_DIRECTORY + list_item + ".list.gz", open(INPUT_DIR + list_item + ".list.gz", "wb").write)
+            r = ftp.retrbinary("RETR " + INTERFACES_DIRECTORY + list_item + ".list.gz", open(os.path.join(INPUT_DIR, list_item + ".list.gz"), "wb").write)
             logging.info(list_item + "list downloaded successfully")
             download_count = download_count + 1
             FileHandler.extract(FileHandler.get_full_path(list_item + ".list", True))
