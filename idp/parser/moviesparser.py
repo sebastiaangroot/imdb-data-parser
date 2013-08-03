@@ -54,7 +54,7 @@ class MoviesParser(BaseParser):
         ],
         'constraints' : 'PRIMARY KEY(title)'
     }
-    end_of_dump_delimiter = ""
+    end_of_dump_delimiter = "--------------------------------------------------------------------------------"
 
     def __init__(self, preferences_map):
         super(MoviesParser, self).__init__(preferences_map)

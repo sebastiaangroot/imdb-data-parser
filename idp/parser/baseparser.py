@@ -97,6 +97,8 @@ class BaseParser(metaclass=ABCMeta):
 
             number_of_processed_lines +=  1
 
+            #print("Processed lines: %d\r" % (number_of_processed_lines), end="")
+
         self.input_file.close()
 
         if(self.mode == "SQL"):
