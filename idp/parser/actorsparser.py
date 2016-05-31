@@ -62,11 +62,15 @@ class ActorsParser(BaseParser):
     def __init__(self, preferences_map):
         super(ActorsParser, self).__init__(preferences_map)
         self.first_one = True
+        self.title = ''
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
+            if self.title == matcher.group(3) and len(matcher.group(1).strip()) == 0:
+                return
+            self.title = matcher.group(3)
             if(len(matcher.group(1).strip()) > 0):
                 namelist = matcher.group(1).split(', ')
                 if(len(namelist) == 2):
@@ -76,7 +80,7 @@ class ActorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
                     
-            self.tsv_file.write(self.name + self.seperator + self.surname + self.seperator + self.concat_regex_groups([2,9,10,11], None, matcher) + "\n")
+            self.tsv_file.write(self.name + self.seperator + self.surname + self.seperator + self.concat_regex_groups([3,4], None, matcher) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:

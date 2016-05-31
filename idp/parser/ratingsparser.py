@@ -60,7 +60,7 @@ class RatingsParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.tsv_file.write(self.concat_regex_groups([1,2,3,4], None, matcher) + "\n")
+            self.tsv_file.write(self.concat_regex_groups([1,2,3,5], None, matcher) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
